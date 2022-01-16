@@ -1,23 +1,23 @@
 package org.app.AirConditioningApplication.Service;
 
-import org.app.AirConditioningApplication.Model.Order;
-import org.app.AirConditioningApplication.Repository.OrderRepo;
+import org.app.AirConditioningApplication.Model.Budget;
+import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
 
-public class OrderService {
-    private final OrderRepo orderRepo;
+public class BudgetService {
+    private final BudgetRepo budgetRepo;
 
-    public OrderService(OrderRepo orderRepo) {
-        this.orderRepo = orderRepo;
+    public BudgetService(BudgetRepo budgetRepo) {
+        this.budgetRepo = budgetRepo;
     }
 
-    public ResponseEntity<Object> save(Order order) {
+    public ResponseEntity<Object> save(Budget budget) {
         try {
-            orderRepo.save(order);
-            return ResponseEntity.accepted().body(order);
+            budgetRepo.save(budget);
+            return ResponseEntity.accepted().body(budget);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -26,11 +26,11 @@ public class OrderService {
 
     public ResponseEntity<Object> showAll() {
         try {
-            List<Order> orderList = orderRepo.findAll();
-            if (!orderList.isEmpty())
-                return ResponseEntity.ok().body(orderList);
+            List<Budget> budgetList = budgetRepo.findAll();
+            if (!budgetList.isEmpty())
+                return ResponseEntity.ok().body(budgetList);
             else
-                return ResponseEntity.ok().body("There are no orders");
+                return ResponseEntity.ok().body("There are no Budgets");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
@@ -39,8 +39,8 @@ public class OrderService {
 
     public ResponseEntity<Object> getById(Long Id) {
         try {
-            Optional<Order> order = orderRepo.findById(Id);
-            return ResponseEntity.ok().body(order);
+            Optional<Budget> budget = budgetRepo.findById(Id);
+            return ResponseEntity.ok().body(budget);
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
@@ -49,8 +49,8 @@ public class OrderService {
 
     public ResponseEntity<Object> delete(Long Id) {
         try {
-            Optional<Order> order = orderRepo.findById(Id);
-            orderRepo.delete(order.get());
+            Optional<Budget> budget = budgetRepo.findById(Id);
+            budgetRepo.delete(budget.get());
             return ResponseEntity.ok().body("Deleted");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
