@@ -1,4 +1,4 @@
-package org.app.AirConditioningApplication.Models;
+package org.app.AirConditioningApplication.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,16 +13,14 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Supplier {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long supplierId;
-    private String orderNumber;
-    private String productSold;
-    private int basePrice;
-    private int tax;
+    private Long orderId;
+    private String type;
+    private String customerName;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "supplier_id", referencedColumnName = "supplierId")
+    @JoinColumn(name = "order_id", referencedColumnName = "orderId")
     List<Product> productList;
 }

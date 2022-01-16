@@ -1,4 +1,4 @@
-package org.app.AirConditioningApplication.Models;
+package org.app.AirConditioningApplication.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,11 +15,13 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Entity
-public class Product {
+public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ProductId;
+    private Long budgetId;
     private String name;
-    private String characteristics;
-    private int quantityInStock;
+    private String customerName;
+    private int totalPrice;
+    private String budgetStatus;
+
 }
