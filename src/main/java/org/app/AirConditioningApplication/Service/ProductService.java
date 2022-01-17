@@ -3,10 +3,12 @@ package org.app.AirConditioningApplication.Service;
 import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ProductService {
     private final ProductRepo productRepo;
 
@@ -40,7 +42,9 @@ public class ProductService {
     public ResponseEntity<Object> getById(Long Id) {
         try {
             Optional<Product> product = productRepo.findById(Id);
-            return ResponseEntity.ok().body(product);
+            if(product.isPresent())
+                return ResponseEntity.ok().body(product);
+            else return ResponseEntity.ok().body("Invalid ID");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
@@ -50,8 +54,10 @@ public class ProductService {
     public ResponseEntity<Object> delete(Long Id) {
         try {
             Optional<Product> product = productRepo.findById(Id);
-            productRepo.delete(product.get());
-            return ResponseEntity.ok().body("Deleted");
+            if(product.isPresent()){
+                productRepo.delete(product.get());
+                return ResponseEntity.ok().body("Deleted");
+            }else return ResponseEntity.ok().body("Invalid ID");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
