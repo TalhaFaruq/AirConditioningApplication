@@ -18,9 +18,11 @@ public class Order{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
     private String type;
-    private String customerName;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "orderId")
     List<Product> productList;
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    Customer customer;
 }
