@@ -1,4 +1,4 @@
-package org.app.AirConditioningApplication.Models;
+package org.app.AirConditioningApplication.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

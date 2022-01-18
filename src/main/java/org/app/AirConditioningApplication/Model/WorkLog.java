@@ -1,4 +1,4 @@
-package org.app.AirConditioningApplication.Models;
+package org.app.AirConditioningApplication.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-public class WorkLogs {
+public class WorkLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workLogId;
