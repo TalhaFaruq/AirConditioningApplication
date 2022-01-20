@@ -18,7 +18,6 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    private ServicesEnum type;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "orderId")
@@ -26,4 +25,8 @@ public class Order {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     Customer customer;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", referencedColumnName = "orderId")
+    List<Services> service;
 }

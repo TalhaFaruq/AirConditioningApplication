@@ -27,4 +27,8 @@ public class Budget {   //This is Quotation
     @OneToOne(cascade = CascadeType.ALL)
     Customer customer;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "budget_id", referencedColumnName = "budgetId")
+    List<Services> service;
+
 }

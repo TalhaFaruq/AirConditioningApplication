@@ -65,21 +65,9 @@ public class BudgetService {
         }
     }
 
-//    public void ExportToPDF(HttpServletResponse response) throws DocumentException, IOException {
-//        response.setContentType("application/pdf");
-//        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-//        String currentDateTime = dateFormatter.format(new Date());
-//
-//        String headerKey = "Content-Disposition";
-//        String headerValue = "attachment; filename=users_" + currentDateTime + ".pdf";
-//        response.setHeader(headerKey, headerValue);
-//
-//        List<Budget> budgetList = budgetRepo.findAll();
-//        PDFExporter exporter = new PDFExporter(budgetList);
-//        exporter.export(response);
-//    }
-    public void pdfcall(){
-        PdfTable pdfTable = new PdfTable();
+
+    public void pdfCall(){
+        PdfTable pdfTable = new PdfTable(budgetRepo.findById(1L).get());
         pdfTable.pdfdownload();
     }
 }
