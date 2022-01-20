@@ -2,6 +2,7 @@ package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
+import org.app.AirConditioningApplication.Utilities.PdfTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -54,13 +55,31 @@ public class BudgetService {
     public ResponseEntity<Object> delete(Long Id) {
         try {
             Optional<Budget> budget = budgetRepo.findById(Id);
-            if(budget.isPresent()){
+            if (budget.isPresent()) {
                 budgetRepo.delete(budget.get());
                 return ResponseEntity.ok().body("Deleted");
-            }else return ResponseEntity.ok().body("Invalid ID");
+            } else return ResponseEntity.ok().body("Invalid ID");
 
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
+    }
+
+//    public void ExportToPDF(HttpServletResponse response) throws DocumentException, IOException {
+//        response.setContentType("application/pdf");
+//        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+//        String currentDateTime = dateFormatter.format(new Date());
+//
+//        String headerKey = "Content-Disposition";
+//        String headerValue = "attachment; filename=users_" + currentDateTime + ".pdf";
+//        response.setHeader(headerKey, headerValue);
+//
+//        List<Budget> budgetList = budgetRepo.findAll();
+//        PDFExporter exporter = new PDFExporter(budgetList);
+//        exporter.export(response);
+//    }
+    public void pdfcall(){
+        PdfTable pdfTable = new PdfTable();
+        pdfTable.pdfdownload();
     }
 }
