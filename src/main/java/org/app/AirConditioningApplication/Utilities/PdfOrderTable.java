@@ -1,48 +1,44 @@
 package org.app.AirConditioningApplication.Utilities;
 
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import org.app.AirConditioningApplication.Model.Budget;
+import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Model.Product;
 
 import java.io.FileOutputStream;
 import java.util.List;
 
-public class PdfTable {
-    private final Budget budget;
+public class PdfOrderTable {
+    private final Order order;
 
-    public int total;
-
-    public PdfTable(Budget budget) {
-        this.budget = budget;
+    public PdfOrderTable(Order order) {
+        this.order = order;
     }
-
 
     public void pdfdownload() {
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\Budget.pdf"));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\order.pdf"));
             document.open();
 
             Paragraph p = new Paragraph();
-            p.add("Customer Name: "+ budget.getCustomer().getName());
+            p.add("Customer Name: "+ order.getCustomer().getName());
             p.setAlignment(Element.ALIGN_CENTER);
 
             document.add(p);
 
-            PdfPTable budgetTable = new PdfPTable(3); // 3 columns.
-            budgetTable.setWidthPercentage(100); //Width 100%
-            budgetTable.setSpacingBefore(10f); //Space before budgetTable
-            budgetTable.setSpacingAfter(10f); //Space after budgetTable
+            PdfPTable orderTable = new PdfPTable(3); // 3 columns.
+            orderTable.setWidthPercentage(100); //Width 100%
+            orderTable.setSpacingBefore(10f); //Space before orderTable
+            orderTable.setSpacingAfter(10f); //Space after orderTable
 
             //Set Column widths
             float[] columnWidths = {1f, 1f, 1f};
-            budgetTable.setWidths(columnWidths);
+            orderTable.setWidths(columnWidths);
 
-            PdfPCell cell1 = new PdfPCell(new Paragraph("Budget ID"));
+            PdfPCell cell1 = new PdfPCell(new Paragraph("Order ID"));
             cell1.setBorderColor(BaseColor.BLUE);
             cell1.setPaddingLeft(10);
             cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -67,18 +63,16 @@ public class PdfTable {
             //cell1.setUserBorderPadding(true);
             //cell2.setUserBorderPadding(true);
             //cell3.setUserBorderPadding(true);
-            budgetTable.addCell(cell1);
-            budgetTable.addCell(cell2);
-            budgetTable.addCell(cell3);
-            budgetTable.addCell(budget.getBudgetId().toString());
-            budgetTable.addCell(budget.getBudgetStatus());
-            List<Product> productList = budget.getProductList();
+            orderTable.addCell(cell1);
+            orderTable.addCell(cell2);
+            orderTable.addCell(cell3);
+            orderTable.addCell(order.getOrderId().toString());
+            List<Product> productList = order.getProductList();
             if (!productList.isEmpty())
                 productTable = products(productList);
-            budget.setTotalPrice(total);
-            budgetTable.addCell(String.valueOf(budget.getTotalPrice()));
+            orderTable.addCell(String.valueOf(order.getTotalPrice())); // The total price will be by quotation
 
-            document.add(budgetTable);
+            document.add(orderTable);
             document.add(productTable);
 
             document.close();
@@ -127,10 +121,7 @@ public class PdfTable {
             productTable.addCell(product.getProductId().toString());
             productTable.addCell(product.getName());
             productTable.addCell(String.valueOf(product.getPrice()));
-            total += product.getPrice();
         }
         return productTable;
     }
-
 }
-

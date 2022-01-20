@@ -2,7 +2,7 @@ package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
-import org.app.AirConditioningApplication.Utilities.PdfTable;
+import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +67,7 @@ public class BudgetService {
 
 
     public void pdfCall(){
-        PdfTable pdfTable = new PdfTable(budgetRepo.findById(1L).get());
-        pdfTable.pdfdownload();
+        PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budgetRepo.findById(1L).get());
+        pdfBudgetTable.pdfdownload();
     }
 }
