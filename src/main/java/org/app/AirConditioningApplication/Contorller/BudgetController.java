@@ -5,6 +5,9 @@ import org.app.AirConditioningApplication.Service.BudgetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
 @RequestMapping("Budget")
 public class BudgetController {
@@ -37,5 +40,10 @@ public class BudgetController {
     @GetMapping("/getByID")
     public ResponseEntity<Object> getById(@RequestParam Long Id) {
         return budgetService.getById(Id);
+    }
+
+    @GetMapping("/exporttoPDF")
+    public void exportToPDF(){
+        budgetService.pdfcall();
     }
 }

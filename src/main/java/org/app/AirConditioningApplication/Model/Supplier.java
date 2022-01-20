@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,12 +18,11 @@ public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long supplierId;
-    private String orderNumber;
-    private String productSold;
+    private String orderNumber = UUID.randomUUID().toString();
     private int basePrice;
     private int tax;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "supplier_id", referencedColumnName = "supplierId")
-    List<Product> productList;
+    List<Product> productSold;
 }
