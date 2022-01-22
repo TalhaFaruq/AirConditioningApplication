@@ -1,6 +1,7 @@
 package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Budget;
+import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,10 @@ public class BudgetService {
 
     public ResponseEntity<Object> save(Budget budget) {
         try {
+            if(budget.getService().equals("installation"))
+                budget.setProductList(null);
+            else if (budget.getService().equals("maintenance"))
+
             budgetRepo.save(budget);
             return ResponseEntity.accepted().body(budget);
         } catch (Exception e) {

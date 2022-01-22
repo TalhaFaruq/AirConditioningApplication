@@ -1,5 +1,6 @@
 package org.app.AirConditioningApplication.Service;
 
+import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Model.Supplier;
 import org.app.AirConditioningApplication.Repository.SupplierRepo;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,12 @@ public class SupplierService {
 
     public ResponseEntity<Object> save(Supplier supplier) {
         try {
+            double total = 0;
+            List<Product> productList = supplier.getProductSold();
+            for (Product product: productList) {
+                total += product.getPrice();
+            }
+            supplier.setTax(total * 0.1);
             supplierRepo.save(supplier);
             return ResponseEntity.accepted().body(supplier);
         } catch (Exception e) {

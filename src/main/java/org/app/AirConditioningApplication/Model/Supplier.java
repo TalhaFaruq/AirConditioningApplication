@@ -20,7 +20,7 @@ public class Supplier {
     private Long supplierId;
     private String orderNumber = UUID.randomUUID().toString();
     private int basePrice;
-    private int tax;
+    private double tax;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "supplier_id", referencedColumnName = "supplierId")
