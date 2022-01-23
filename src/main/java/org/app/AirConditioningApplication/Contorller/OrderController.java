@@ -44,4 +44,11 @@ public class OrderController {
     public ResponseEntity<Object> budgettoOrder(@RequestParam Long Id) {
         return orderService.budgetToOrder(Id);
     }
+
+    @GetMapping("/printPdfOrder")
+    public ResponseEntity<Object> pdfDownloader(@RequestParam Long Id){
+        return orderService.printPdf(Id);
+    }
+
+
 }

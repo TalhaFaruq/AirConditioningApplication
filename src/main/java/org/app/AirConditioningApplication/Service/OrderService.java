@@ -68,6 +68,7 @@ public class OrderService {
         }
     }
 
+    //when the order is conformed it will change into order
     public ResponseEntity<Object> budgetToOrder(Long id) {
         Optional<Budget> budget = budgetRepo.findById(id);
         if (budget.isPresent()) {
@@ -81,11 +82,16 @@ public class OrderService {
             orderRepo.save(order);
             budgetRepo.save(budget.get());
 
-            //Pdf will be downloaded in downloads
-            PdfOrderTable pdfOrderTable = new PdfOrderTable(order);
-            pdfOrderTable.pdfdownload();
             return ResponseEntity.ok().body("PDF Downloaded");
         }
         else return ResponseEntity.ok().body("Invalid ID");
+    }
+
+    //Must be called after order is saved in database with worklog
+    public ResponseEntity<Object> printPdf(Long id){
+        //Pdf will be downloaded in downloads
+        PdfOrderTable pdfOrderTable = new PdfOrderTable(orderRepo.findById(id).get());
+        pdfOrderTable.pdfdownload();
+        return ResponseEntity.accepted().body("Pdf downloaded");
     }
 }
