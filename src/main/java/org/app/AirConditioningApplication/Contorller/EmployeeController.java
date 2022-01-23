@@ -46,4 +46,9 @@ public class EmployeeController {
         return employeeService.getPriceByHour(eid,oid, workLog);
     }
 
+    @PostMapping("/emailWorkLog")
+    public ResponseEntity<Object> workLogByEmail(@RequestParam String email){
+        return employeeService.showWorkLog(email);
+    }
+
 }

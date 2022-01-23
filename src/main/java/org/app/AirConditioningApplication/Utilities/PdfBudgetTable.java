@@ -14,8 +14,6 @@ import java.util.List;
 public class PdfBudgetTable {
     private final Budget budget;
 
-    public int total;
-
     public PdfBudgetTable(Budget budget) {
         this.budget = budget;
     }
@@ -75,7 +73,6 @@ public class PdfBudgetTable {
             List<Product> productList = budget.getProductList();
             if (!productList.isEmpty())
                 productTable = products(productList);
-            budget.setTotalPrice(total);
             budgetTable.addCell(String.valueOf(budget.getTotalPrice()));
 
             document.add(budgetTable);
@@ -127,7 +124,6 @@ public class PdfBudgetTable {
             productTable.addCell(product.getProductId().toString());
             productTable.addCell(product.getName());
             productTable.addCell(String.valueOf(product.getPrice()));
-            total += product.getPrice();
         }
         return productTable;
     }

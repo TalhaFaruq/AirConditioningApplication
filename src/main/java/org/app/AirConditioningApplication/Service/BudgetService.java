@@ -20,10 +20,17 @@ public class BudgetService {
 
     public ResponseEntity<Object> save(Budget budget) {
         try {
-            if(budget.getService().equals("installation"))
-                budget.setProductList(null);
-            else if (budget.getService().equals("maintenance"))
+            //As the budget is Quotation, order is final receipt
+            budget.setBudgetStatus("Pending");
+            if (!budget.getProductList().isEmpty()) {
+                List<Product> products =  budget.getProductList();
+                //this stream will get the sum of all the products
+                budget.setTotalPrice(products.stream().mapToInt(Product::getPrice).sum());
+            }
 
+            // This will create pdf of budget
+            PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budget);
+            pdfBudgetTable.pdfdownload();
             budgetRepo.save(budget);
             return ResponseEntity.accepted().body(budget);
         } catch (Exception e) {
@@ -70,7 +77,7 @@ public class BudgetService {
         }
     }
 
-
+    // For testing purpose (Test pass)
     public void pdfCall(){
         PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budgetRepo.findById(1L).get());
         pdfBudgetTable.pdfdownload();

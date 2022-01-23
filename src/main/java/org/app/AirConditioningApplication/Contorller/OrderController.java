@@ -38,4 +38,10 @@ public class OrderController {
     public ResponseEntity<Object> getById(@RequestParam Long Id) {
         return orderService.getById(Id);
     }
+
+    // When this api is called the pdf of order is also downloaded
+    @GetMapping("/budgetToOrder")
+    public ResponseEntity<Object> budgettoOrder(@RequestParam Long Id) {
+        return orderService.budgetToOrder(Id);
+    }
 }

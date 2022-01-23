@@ -70,6 +70,8 @@ public class EmployeeService {
         }
     }
 
+    // The employee will tell how many hour will the work take. So after order is saved then the id of employee with order id needed to put
+    // the working hours in the database and calculate the price
     public ResponseEntity<Object> getPriceByHour(Long eid, Long oid, WorkLog workLog) {
         try {
             Optional<Employee> emp = employeeRepo.findById(eid);
@@ -82,10 +84,20 @@ public class EmployeeService {
                 workLog.getOrder().setEmpPrice(emp.get().getPriceTime() * workLog.getNumberOfHours());
                 order.get().setTotalPrice(order.get().getTotalPrice() + order.get().getEmpPrice());
                 emp.get().getWorkLogList().add(workLog);
+
+                employeeRepo.save(emp.get());
                 return ResponseEntity.ok().body(emp);
             } else return ResponseEntity.ok().body("The Employee or Order does not exist");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
+    }
+
+    //Worklog will only be shown by the email.
+    public ResponseEntity<Object> showWorkLog(String email){
+        Optional<Employee> employee = employeeRepo.findEmployeeByEmail(email);
+        if(employee.isPresent()){
+            return ResponseEntity.ok().body(employee.get().getWorkLogList());
+        }else return ResponseEntity.ok().body("The email is invalid");
     }
 }

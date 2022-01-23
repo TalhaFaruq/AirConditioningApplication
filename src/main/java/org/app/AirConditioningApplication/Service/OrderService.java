@@ -1,7 +1,10 @@
 package org.app.AirConditioningApplication.Service;
 
+import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Model.Order;
+import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
+import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +14,11 @@ import java.util.Optional;
 @Service
 public class OrderService {
     private final OrderRepo orderRepo;
+    private final BudgetRepo budgetRepo;
 
-    public OrderService(OrderRepo orderRepo) {
+    public OrderService(OrderRepo orderRepo, BudgetRepo budgetRepo) {
         this.orderRepo = orderRepo;
+        this.budgetRepo = budgetRepo;
     }
 
     public ResponseEntity<Object> save(Order order) {
@@ -57,9 +62,30 @@ public class OrderService {
             if (order.isPresent()) {
                 orderRepo.delete(order.get());
                 return ResponseEntity.ok().body("Deleted");
-            }else return ResponseEntity.ok().body("Invalid ID");
+            } else return ResponseEntity.ok().body("Invalid ID");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
+    }
+
+    public ResponseEntity<Object> budgetToOrder(Long id) {
+        Optional<Budget> budget = budgetRepo.findById(id);
+        if (budget.isPresent()) {
+            Order order = null;
+            budget.get().setBudgetStatus("Completed");
+            order.setService(budget.get().getService());
+            order.setCustomer(budget.get().getCustomer());
+            order.setProductList(budget.get().getProductList());
+            order.setTotalPrice(budget.get().getTotalPrice());
+
+            orderRepo.save(order);
+            budgetRepo.save(budget.get());
+
+            //Pdf will be downloaded in downloads
+            PdfOrderTable pdfOrderTable = new PdfOrderTable(order);
+            pdfOrderTable.pdfdownload();
+            return ResponseEntity.ok().body("PDF Downloaded");
+        }
+        else return ResponseEntity.ok().body("Invalid ID");
     }
 }

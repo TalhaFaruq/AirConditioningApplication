@@ -45,7 +45,7 @@ public class PdfOrderTable {
             cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
 
-            PdfPCell cell2 = new PdfPCell(new Paragraph("Status"));
+            PdfPCell cell2 = new PdfPCell(new Paragraph("Employee Price"));
             cell2.setBorderColor(BaseColor.BLUE);
             cell2.setPaddingLeft(10);
             cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -67,6 +67,7 @@ public class PdfOrderTable {
             orderTable.addCell(cell2);
             orderTable.addCell(cell3);
             orderTable.addCell(order.getOrderId().toString());
+            orderTable.addCell(String.valueOf(order.getEmpPrice()));
             List<Product> productList = order.getProductList();
             if (!productList.isEmpty())
                 productTable = products(productList);
