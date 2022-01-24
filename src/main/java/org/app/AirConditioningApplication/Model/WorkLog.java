@@ -19,6 +19,6 @@ public class WorkLog {
     private Long workLogId;
     private LocalDate date;
     private int numberOfHours;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     Order order;
 }

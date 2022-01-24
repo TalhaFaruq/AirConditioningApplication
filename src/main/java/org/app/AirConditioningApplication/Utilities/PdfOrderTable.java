@@ -20,7 +20,8 @@ public class PdfOrderTable {
     public void pdfdownload() {
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\order.pdf"));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\Order " +
+                    order.getOrderId()+".pdf"));
             document.open();
 
             Paragraph p = new Paragraph();
@@ -68,6 +69,7 @@ public class PdfOrderTable {
             orderTable.addCell(cell3);
             orderTable.addCell(order.getOrderId().toString());
             orderTable.addCell(String.valueOf(order.getEmpPrice()));
+
             List<Product> productList = order.getProductList();
             if (!productList.isEmpty())
                 productTable = products(productList);

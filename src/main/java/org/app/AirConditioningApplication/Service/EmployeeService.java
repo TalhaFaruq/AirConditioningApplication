@@ -5,9 +5,11 @@ import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Repository.EmployeeRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
+import org.app.AirConditioningApplication.Repository.WorkLogRepo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,11 +17,13 @@ import java.util.Optional;
 public class EmployeeService {
     private final EmployeeRepo employeeRepo;
     private final OrderRepo orderRepo;
+    private final WorkLogRepo workLogRepo;
 
 
-    public EmployeeService(EmployeeRepo employeeRepo, OrderRepo orderRepo) {
+    public EmployeeService(EmployeeRepo employeeRepo, OrderRepo orderRepo, WorkLogRepo workLogRepo) {
         this.employeeRepo = employeeRepo;
         this.orderRepo = orderRepo;
+        this.workLogRepo = workLogRepo;
     }
 
     public ResponseEntity<Object> save(Employee employee) {
@@ -62,6 +66,7 @@ public class EmployeeService {
         try {
             Optional<Employee> employee = employeeRepo.findById(Id);
             if (employee.isPresent()) {
+                employee.get().setWorkLogList(null);
                 employeeRepo.delete(employee.get());
                 return ResponseEntity.ok().body("Deleted");
             } else return ResponseEntity.ok().body("Invalid Id");
@@ -72,23 +77,21 @@ public class EmployeeService {
 
     // The employee will tell how many hour will the work take. So after order is saved then the id of employee with order id needed to put
     // the working hours in the database and calculate the price
-    public ResponseEntity<Object> getPriceByHour(Long eid, Long oid, WorkLog workLog) {
+    public ResponseEntity<Object> getPriceByHour(Long eid, WorkLog workLog) {
         try {
             Optional<Employee> emp = employeeRepo.findById(eid);
-            Optional<Order> order = orderRepo.findById(oid);
-            if (emp.isPresent() && order.isPresent()) {
-                if (emp.get().getType().equals("officer"))
-                    emp.get().setPriceTime(30);
-                else if (emp.get().getType().equals("assistant"))
-                    emp.get().setPriceTime(40);
-                workLog.getOrder().setEmpPrice(emp.get().getPriceTime() * workLog.getNumberOfHours());
-                order.get().setTotalPrice(order.get().getTotalPrice() + order.get().getEmpPrice());
+            if (emp.isPresent()) {
+                workLog.setDate(LocalDate.now());
+                Optional<Order> order = orderRepo.findById(workLog.getOrder().getOrderId());
+                if (order.isPresent()) {
+                    workLog.setOrder(order.get());
+                }
                 emp.get().getWorkLogList().add(workLog);
-
                 employeeRepo.save(emp.get());
                 return ResponseEntity.ok().body(emp);
             } else return ResponseEntity.ok().body("The Employee or Order does not exist");
         } catch (Exception e) {
+            System.out.println(e);
             return ResponseEntity.ok().body(e.getMessage());
         }
     }

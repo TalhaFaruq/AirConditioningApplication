@@ -8,8 +8,10 @@ import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -60,6 +62,9 @@ public class OrderService {
         try {
             Optional<Order> order = orderRepo.findById(Id);
             if (order.isPresent()) {
+                order.get().setService(null);
+                order.get().setCustomer(null);
+                order.get().setProductList(null);
                 orderRepo.delete(order.get());
                 return ResponseEntity.ok().body("Deleted");
             } else return ResponseEntity.ok().body("Invalid ID");
@@ -72,11 +77,15 @@ public class OrderService {
     public ResponseEntity<Object> budgetToOrder(Long id) {
         Optional<Budget> budget = budgetRepo.findById(id);
         if (budget.isPresent()) {
-            Order order = null;
+            Order order = new Order();
             budget.get().setBudgetStatus("Completed");
-            order.setService(budget.get().getService());
+            List<Order> orderList = orderRepo.findAll();
+            if (orderList.size()==0){
+                order.setOrderId(1L);
+            }else order.setOrderId((long) orderList.size() +1);
+            order.setService(new ArrayList<>(budget.get().getService()));
             order.setCustomer(budget.get().getCustomer());
-            order.setProductList(budget.get().getProductList());
+            order.setProductList(new ArrayList<>(budget.get().getProductList()));
             order.setTotalPrice(budget.get().getTotalPrice());
 
             orderRepo.save(order);

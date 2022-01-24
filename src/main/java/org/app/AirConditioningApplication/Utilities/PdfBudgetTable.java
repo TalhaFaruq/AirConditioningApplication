@@ -22,7 +22,8 @@ public class PdfBudgetTable {
     public void pdfdownload() {
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\Budget.pdf"));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\" +
+                    "Budget "+budget.getBudgetId()+".pdf"));
             document.open();
 
             Paragraph p = new Paragraph();

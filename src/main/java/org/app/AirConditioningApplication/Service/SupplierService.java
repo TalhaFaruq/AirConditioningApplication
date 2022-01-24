@@ -62,6 +62,7 @@ public class SupplierService {
         try {
             Optional<Supplier> supplier = supplierRepo.findById(Id);
             if(supplier.isPresent()){
+                supplier.get().setProductSold(null);
                 supplierRepo.delete(supplier.get());
                 return ResponseEntity.ok().body("Deleted");
             }else return ResponseEntity.ok().body("Invalid ID");

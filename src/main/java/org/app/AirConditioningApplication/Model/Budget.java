@@ -20,11 +20,11 @@ public class Budget {   //This is Quotation
     private int totalPrice;
     private String budgetStatus;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "budget_id", referencedColumnName = "budgetId")
     List<Product> productList;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     Customer customer;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

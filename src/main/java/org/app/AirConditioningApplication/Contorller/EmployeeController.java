@@ -3,7 +3,6 @@ package org.app.AirConditioningApplication.Contorller;
 import org.app.AirConditioningApplication.Model.Employee;
 import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Service.EmployeeService;
-import org.hibernate.jdbc.Work;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,9 +40,9 @@ public class EmployeeController {
         return employeeService.getById(Id);
     }
 
-    @GetMapping("/calculateprice")
-    public ResponseEntity<Object> calculatePrice(@RequestParam Long eid, @RequestParam Long oid, @RequestBody WorkLog workLog) {
-        return employeeService.getPriceByHour(eid,oid, workLog);
+    @PutMapping("/calculateprice")
+    public ResponseEntity<Object> addWorkLog(@RequestParam Long EmployeeId, @RequestBody WorkLog workLog) {
+        return employeeService.getPriceByHour(EmployeeId, workLog);
     }
 
     @PostMapping("/emailWorkLog")

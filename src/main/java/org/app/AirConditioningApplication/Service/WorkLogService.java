@@ -57,6 +57,7 @@ public class WorkLogService {
         try {
             Optional<WorkLog> workLog = workLogRepo.findById(Id);
             if (workLog.isPresent()) {
+                workLog.get().setOrder(null);
                 workLogRepo.delete(workLog.get());
                 return ResponseEntity.ok().body("Deleted");
             }else return ResponseEntity.ok().body("Invalid ID");
