@@ -4,6 +4,7 @@ import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Service.BudgetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+@CrossOrigin
 
 @RestController
 @RequestMapping("Budget")
@@ -40,7 +41,7 @@ public class BudgetController {
     }
 
     @GetMapping("/exporttoPDF")
-    public void exportToPDF(){
-        budgetService.pdfCall();
+    public void exportToPDF(@RequestParam Long budgetId){
+        budgetService.pdfCall(budgetId);
     }
 }

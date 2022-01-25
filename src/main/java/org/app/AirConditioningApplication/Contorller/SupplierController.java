@@ -4,7 +4,7 @@ import org.app.AirConditioningApplication.Model.Supplier;
 import org.app.AirConditioningApplication.Service.SupplierService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("Supplier")
 public class SupplierController {

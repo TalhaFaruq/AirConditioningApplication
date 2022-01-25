@@ -5,7 +5,7 @@ import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("Employee")
 public class EmployeeController {
@@ -40,11 +40,13 @@ public class EmployeeController {
         return employeeService.getById(Id);
     }
 
-    @PutMapping("/calculateprice")
+    //This api will add workLog against employee because employee will exist for worklog
+    @PutMapping("/addWorkLog")
     public ResponseEntity<Object> addWorkLog(@RequestParam Long EmployeeId, @RequestBody WorkLog workLog) {
         return employeeService.getPriceByHour(EmployeeId, workLog);
     }
 
+    //This api will only show workLog by email of employee
     @PostMapping("/emailWorkLog")
     public ResponseEntity<Object> workLogByEmail(@RequestParam String email){
         return employeeService.showWorkLog(email);

@@ -42,8 +42,6 @@ public class BudgetService {
             // This will create pdf of budget
 
             budgetRepo.save(budget);
-            PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budget);
-            pdfBudgetTable.pdfdownload();
             return ResponseEntity.accepted().body(budget);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -93,8 +91,8 @@ public class BudgetService {
     }
 
     // For testing purpose (Test pass)
-    public void pdfCall(){
-        PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budgetRepo.findById(3L).get());
+    public void pdfCall(Long budgetId){
+        PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budgetRepo.findById(budgetId).get());
         pdfBudgetTable.pdfdownload();
     }
 }

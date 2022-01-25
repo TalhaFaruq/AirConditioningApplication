@@ -5,7 +5,7 @@ import org.app.AirConditioningApplication.Model.Employee;
 import org.app.AirConditioningApplication.Service.CustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("Customer")
 public class CustomerController {
