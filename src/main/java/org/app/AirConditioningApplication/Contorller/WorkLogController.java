@@ -2,8 +2,9 @@ package org.app.AirConditioningApplication.Contorller;
 
 import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Service.WorkLogService;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
+
 @CrossOrigin
 @RestController
 @RequestMapping("WorkLog")
@@ -15,28 +16,27 @@ public class WorkLogController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Object> list() {
+    public ApiResponse list() {
         return workLogService.showAll();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody WorkLog workLog) {
+    public ApiResponse add(@RequestBody WorkLog workLog) {
         return workLogService.save(workLog);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Object> update(@RequestBody WorkLog workLog) {
+    public ApiResponse update(@RequestBody WorkLog workLog) {
         return workLogService.save(workLog);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Object> delete(@RequestParam Long Id) {
+    public ApiResponse delete(@RequestParam Long Id) {
         return workLogService.delete(Id);
     }
 
     @GetMapping("/getByID")
-    public ResponseEntity<Object> getById(@RequestParam Long Id) {
+    public ApiResponse getById(@RequestParam Long Id) {
         return workLogService.getById(Id);
     }
-
 }
