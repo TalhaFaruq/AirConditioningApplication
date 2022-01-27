@@ -5,6 +5,7 @@ import org.app.AirConditioningApplication.Repository.WorkLogRepo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class WorkLogService {
 
     public ResponseEntity<Object> save(WorkLog workLog) {
         try {
+            workLog.setDate(LocalDate.now());
             workLogRepo.save(workLog);
             return ResponseEntity.accepted().body(workLog);
         } catch (Exception e) {
@@ -55,6 +57,7 @@ public class WorkLogService {
         try {
             Optional<WorkLog> workLog = workLogRepo.findById(Id);
             if (workLog.isPresent()) {
+                workLog.get().setOrder(null);
                 workLogRepo.delete(workLog.get());
                 return ResponseEntity.ok().body("Deleted");
             }else return ResponseEntity.ok().body("Invalid ID");

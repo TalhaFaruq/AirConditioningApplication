@@ -4,7 +4,7 @@ import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Service.WorkLogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("WorkLog")
 public class WorkLogController {

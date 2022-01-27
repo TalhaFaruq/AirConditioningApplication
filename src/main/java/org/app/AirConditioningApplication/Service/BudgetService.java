@@ -1,8 +1,10 @@
 package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Budget;
+import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
-import org.app.AirConditioningApplication.Utilities.PdfTable;
+import org.app.AirConditioningApplication.Repository.ProductRepo;
+import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +14,33 @@ import java.util.Optional;
 @Service
 public class BudgetService {
     private final BudgetRepo budgetRepo;
+    private final ProductRepo productRepo;
 
-    public BudgetService(BudgetRepo budgetRepo) {
+
+
+    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo) {
         this.budgetRepo = budgetRepo;
+
+        this.productRepo = productRepo;
     }
 
     public ResponseEntity<Object> save(Budget budget) {
         try {
+            //As the budget is Quotation, order is final receipt
+            budget.setBudgetStatus("Pending");
+            if (!budget.getProductList().isEmpty()) {
+                List<Product> products =  budget.getProductList();
+                //this stream will get the sum of all the products
+                for (Product product:products) {
+                    Optional<Product> product1 = productRepo.findById(product.getProductId());
+                    budget.setTotalPrice(budget.getTotalPrice() + product1.get().getPrice());
+                }
+//                budget.setTotalPrice(products.stream().mapToInt(Product::getPrice).sum());
+//                budget.getProductList().stream().forEach(product -> product.setQuantityInStock(product.getQuantityInStock()-1));
+            }
+
+            // This will create pdf of budget
+
             budgetRepo.save(budget);
             return ResponseEntity.accepted().body(budget);
         } catch (Exception e) {
@@ -56,6 +78,9 @@ public class BudgetService {
         try {
             Optional<Budget> budget = budgetRepo.findById(Id);
             if (budget.isPresent()) {
+                budget.get().setProductList(null);
+                budget.get().setService(null);
+                budget.get().setCustomer(null);
                 budgetRepo.delete(budget.get());
                 return ResponseEntity.ok().body("Deleted");
             } else return ResponseEntity.ok().body("Invalid ID");
@@ -65,21 +90,9 @@ public class BudgetService {
         }
     }
 
-//    public void ExportToPDF(HttpServletResponse response) throws DocumentException, IOException {
-//        response.setContentType("application/pdf");
-//        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-//        String currentDateTime = dateFormatter.format(new Date());
-//
-//        String headerKey = "Content-Disposition";
-//        String headerValue = "attachment; filename=users_" + currentDateTime + ".pdf";
-//        response.setHeader(headerKey, headerValue);
-//
-//        List<Budget> budgetList = budgetRepo.findAll();
-//        PDFExporter exporter = new PDFExporter(budgetList);
-//        exporter.export(response);
-//    }
-    public void pdfcall(){
-        PdfTable pdfTable = new PdfTable();
-        pdfTable.pdfdownload();
+    // For testing purpose (Test pass)
+    public void pdfCall(Long budgetId){
+        PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budgetRepo.findById(budgetId).get());
+        pdfBudgetTable.pdfdownload();
     }
 }
