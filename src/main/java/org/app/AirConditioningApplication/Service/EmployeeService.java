@@ -32,7 +32,7 @@ public class EmployeeService {
 
         try {
             employeeRepo.save(employee);
-            apiResponse.setMessage("Successful");
+            apiResponse.setMessage("Successfully added in the database");
             apiResponse.setData(employee);
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
@@ -53,6 +53,7 @@ public class EmployeeService {
             if (employeeList.isEmpty()) {
                 apiResponse.setMessage("There is no employee in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
 
             } else {
                 apiResponse.setMessage("Successful");
@@ -104,7 +105,7 @@ public class EmployeeService {
                 employeeRepo.delete(employee.get());
 
                 apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Deleted");
+                apiResponse.setMessage("Successfully Deleted");
 
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
