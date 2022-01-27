@@ -138,7 +138,7 @@ public class EmployeeService {
 
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Work log added");
-                apiResponse.setData(emp.get());
+                apiResponse.setData(emp.get().getWorkLogList());
 
                 return apiResponse;
             } else {
