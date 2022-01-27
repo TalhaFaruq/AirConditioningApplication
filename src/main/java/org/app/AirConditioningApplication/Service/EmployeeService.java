@@ -156,27 +156,33 @@ public class EmployeeService {
 
     //WorkLog will only be shown by the email.
     public ApiResponse showWorkLog(String email) {
-        Optional<Employee> employee = employeeRepo.findEmployeeByEmail(email);
         ApiResponse apiResponse = new ApiResponse();
 
+        try {
+            Optional<Employee> employee = employeeRepo.findEmployeeByEmail(email);
 
-        if (employee.isPresent()) {
-            if (employee.get().getType().equalsIgnoreCase("admin")) {
-                apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successful");
-                apiResponse.setData(workLogRepo.findAll());
-                return apiResponse;
+            if (employee.isPresent()) {
+                if (employee.get().getType().equalsIgnoreCase("admin")) {
+                    apiResponse.setStatus(HttpStatus.OK.value());
+                    apiResponse.setMessage("Successful");
+                    apiResponse.setData(workLogRepo.findAll());
+                    return apiResponse;
+                } else {
+                    apiResponse.setStatus(HttpStatus.OK.value());
+                    apiResponse.setMessage("Successful");
+                    apiResponse.setData(employee.get().getWorkLogList());
+                    return apiResponse;
+                }
+
             } else {
-                apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successful");
-                apiResponse.setData(employee.get().getWorkLogList());
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no user against this id");
+                apiResponse.setData(null);
                 return apiResponse;
             }
-
-        } else {
-            apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            apiResponse.setMessage("There is no user against this id");
-            apiResponse.setData(null);
+        } catch (Exception e) {
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
         }
     }
