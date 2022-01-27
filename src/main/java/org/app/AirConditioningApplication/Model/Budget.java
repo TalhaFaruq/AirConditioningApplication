@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,20 +13,23 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Budget {
+public class Budget {   //This is Quotation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long budgetId;
-    private String name;
-    //private String customerName;
-    private int totalPrice;
+    private double totalPrice;
     private String budgetStatus;
+    private String budgetName;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "budget_id", referencedColumnName = "budgetId")
     List<Product> productList;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     Customer customer;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "budget_id", referencedColumnName = "budgetId")
+    List<Services> service;
 
 }

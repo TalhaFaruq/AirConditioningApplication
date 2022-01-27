@@ -4,7 +4,7 @@ import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("Product")
 public class ProductController {
@@ -37,5 +37,11 @@ public class ProductController {
     @GetMapping("/getByID")
     public ResponseEntity<Object> getById(@RequestParam Long Id) {
         return productService.getById(Id);
+    }
+
+    //This api only take product id and quantity which will be added to current quantity of product
+    @GetMapping("/productQuantity")
+    public ResponseEntity<Object> productQuantity(@PathVariable Long id,@PathVariable int quantity){
+        return productService.productQuantity(id, quantity);
     }
 }

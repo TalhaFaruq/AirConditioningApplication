@@ -4,7 +4,7 @@ import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("Order")
 public class OrderController {
@@ -38,4 +38,17 @@ public class OrderController {
     public ResponseEntity<Object> getById(@RequestParam Long Id) {
         return orderService.getById(Id);
     }
+
+    // When this api is called the pdf of order is also downloaded
+    @GetMapping("/budgetToOrder")
+    public ResponseEntity<Object> budgetToOrder(@RequestParam Long Id) {
+        return orderService.budgetToOrder(Id);
+    }
+
+    @GetMapping("/printPdfOrder")
+    public ResponseEntity<Object> pdfDownloader(@RequestParam Long Id){
+        return orderService.printPdf(Id);
+    }
+
+
 }

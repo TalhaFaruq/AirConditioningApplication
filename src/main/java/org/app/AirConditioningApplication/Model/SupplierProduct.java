@@ -1,24 +1,27 @@
 package org.app.AirConditioningApplication.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-public class WorkLog {
+public class SupplierProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long workLogId;
-    private LocalDate date;
-    private int numberOfHours;
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
-    Order order;
+    private Long productId;
+    private String name;
+    private String characteristics;
+    private double basePrice;
+    private double tax;
+    @Transient
+    private int productCount;
+
 }

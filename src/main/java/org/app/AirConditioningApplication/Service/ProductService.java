@@ -62,4 +62,17 @@ public class ProductService {
             return ResponseEntity.ok().body(e.getMessage());
         }
     }
+
+    public ResponseEntity<Object> productQuantity(Long id, int quantity){
+        try {
+            Optional<Product> product = productRepo.findById(id);
+            if(product.isPresent()){
+                product.get().setQuantityInStock(product.get().getQuantityInStock()+quantity);
+                productRepo.save(product.get());
+                return ResponseEntity.ok().body(product);
+            }else return ResponseEntity.ok().body("Invalid ID");
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(e.getMessage());
+        }
+    }
 }
