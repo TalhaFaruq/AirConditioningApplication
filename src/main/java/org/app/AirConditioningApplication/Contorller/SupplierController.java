@@ -2,6 +2,7 @@ package org.app.AirConditioningApplication.Contorller;
 
 import org.app.AirConditioningApplication.Model.Supplier;
 import org.app.AirConditioningApplication.Service.SupplierService;
+import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,17 +19,17 @@ public class SupplierController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Object> list() {
+    public ApiResponse list() {
         return supplierService.showAll();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody Supplier supplier) {
+    public ApiResponse add(@RequestBody Supplier supplier) {
         return supplierService.save(supplier);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Object> update(@RequestBody Supplier supplier) {
+    public ApiResponse update(@RequestBody Supplier supplier) {
         return supplierService.save(supplier);
     }
 
