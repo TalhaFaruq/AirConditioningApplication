@@ -38,4 +38,11 @@ public class SupplierController {
     public ResponseEntity<Object> getById(@RequestParam Long Id) {
         return supplierService.getById(Id);
     }
+
+    @PostMapping("/buyProductFromSupplier")
+    @ResponseBody
+    public void buyProductFromSupplier(@RequestBody Supplier supplier, @RequestParam(name = "quantity") Integer quantityToBuy ) {
+        supplierService.buyProductsFromSupplier(supplier, quantityToBuy);
+    }
+
 }

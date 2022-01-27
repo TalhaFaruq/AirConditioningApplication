@@ -15,13 +15,12 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Entity
-public class Product {
+public class SupplierProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ProductId;
+    private Long productId;
     private String name;
     private String characteristics;
-    private double price;
-    private int quantityInStock;
+    private double basePrice;
     private double tax;
 }

@@ -41,13 +41,13 @@ public class EmployeeController {
     }
 
     //This api will add workLog against employee because employee will exist for worklog
-    @PutMapping("/addWorkLog")
-    public ResponseEntity<Object> addWorkLog(@RequestParam Long EmployeeId, @RequestBody WorkLog workLog) {
-        return employeeService.getPriceByHour(EmployeeId, workLog);
+    @PostMapping("/addWorkLog")
+    public ResponseEntity<Object> addWorkLog(@RequestParam String email, @RequestBody WorkLog workLog) {
+        return employeeService.addNewWorkLog(email, workLog);
     }
 
     //This api will only show workLog by email of employee
-    @PostMapping("/emailWorkLog")
+    @GetMapping("/GetWorkLogByEmail")
     public ResponseEntity<Object> workLogByEmail(@RequestParam String email){
         return employeeService.showWorkLog(email);
     }

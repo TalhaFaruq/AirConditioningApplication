@@ -1,8 +1,6 @@
 package org.app.AirConditioningApplication.Service;
 
-import org.app.AirConditioningApplication.Model.Employee;
-import org.app.AirConditioningApplication.Model.Order;
-import org.app.AirConditioningApplication.Model.WorkLog;
+import org.app.AirConditioningApplication.Model.*;
 import org.app.AirConditioningApplication.Repository.EmployeeRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
 import org.app.AirConditioningApplication.Repository.WorkLogRepo;
@@ -77,9 +75,9 @@ public class EmployeeService {
 
     // The employee will tell how many hour will the work take. So after order is saved then the id of employee with order id needed to put
     // the working hours in the database and calculate the price
-    public ResponseEntity<Object> getPriceByHour(Long eid, WorkLog workLog) {
+    public ResponseEntity<Object> addNewWorkLog(String email, WorkLog workLog) {
         try {
-            Optional<Employee> emp = employeeRepo.findById(eid);
+            Optional<Employee> emp = employeeRepo.findEmployeeByEmail(email);
             if (emp.isPresent()) {
                 workLog.setDate(LocalDate.now());
                 Optional<Order> order = orderRepo.findById(workLog.getOrder().getOrderId());
@@ -95,6 +93,7 @@ public class EmployeeService {
             return ResponseEntity.ok().body(e.getMessage());
         }
     }
+
 
     //Worklog will only be shown by the email.
     public ResponseEntity<Object> showWorkLog(String email){

@@ -83,7 +83,7 @@ public class OrderService {
             if (orderList.size()==0){
                 order.setOrderId(1L);
             }else order.setOrderId((long) orderList.size() +1);
-            order.setService(new ArrayList<>(budget.get().getService()));
+            order.setService((budget.get().getService()));
             order.setCustomer(budget.get().getCustomer());
             order.setProductList(new ArrayList<>(budget.get().getProductList()));
             order.setTotalPrice(budget.get().getTotalPrice());
