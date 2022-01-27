@@ -28,20 +28,40 @@ public class SupplierService {
         this.supplierPurchasedHistoryRepository = supplierPurchasedHistoryRepository;
     }
 
-    public ResponseEntity<Object> save(Supplier supplier) {
-        try {
-//            double total = 0;
-            for (SupplierProduct product : supplier.getSupplierProducts()
-            ) {
-                product.setBasePrice(product.getBasePrice());
-                /*total += product.getBasePrice();
-                product.setTax(total * product.getTax());*/
-            }
+    public ApiResponse showAll() {
+        ApiResponse apiResponse = new ApiResponse();
 
-            supplierRepo.save(supplier);
-            return ResponseEntity.accepted().body(supplier);
+        try {
+            List<Supplier> supplierList = supplierRepo.findAll();
+            if (!supplierList.isEmpty()) {
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(supplierList);
+                apiResponse.setStatus(HttpStatus.OK.value());
+            } else {
+                apiResponse.setMessage("There is no work log in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
+
+    public ApiResponse save(Supplier supplier) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            supplierRepo.save(supplier);
+            apiResponse.setMessage("Supplier Successfully added in the database");
+            apiResponse.setData(supplier);
+            apiResponse.setStatus(HttpStatus.OK.value());
+            return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
@@ -95,19 +115,6 @@ public class SupplierService {
         apiResponse.setMessage("Products Purchased");
         apiResponse.setData(purchasedHistory);
         supplierPurchasedHistoryRepository.save(purchasedHistory);
-    }
-
-
-    public ResponseEntity<Object> showAll() {
-        try {
-            List<Supplier> supplierList = supplierRepo.findAll();
-            if (!supplierList.isEmpty())
-                return ResponseEntity.ok().body(supplierList);
-            else
-                return ResponseEntity.ok().body("There are no suppliers");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
     }
 
 
