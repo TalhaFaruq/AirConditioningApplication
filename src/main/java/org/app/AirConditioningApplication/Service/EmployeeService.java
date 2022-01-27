@@ -8,7 +8,6 @@ import org.app.AirConditioningApplication.Repository.OrderRepo;
 import org.app.AirConditioningApplication.Repository.WorkLogRepo;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,12 +27,19 @@ public class EmployeeService {
         this.workLogRepo = workLogRepo;
     }
 
-    public ResponseEntity<Object> save(Employee employee) {
+    public ApiResponse save(Employee employee) {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             employeeRepo.save(employee);
-            return ResponseEntity.accepted().body(employee);
+            apiResponse.setMessage("Successful");
+            apiResponse.setData(employee);
+            apiResponse.setStatus(HttpStatus.OK.value());
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
@@ -155,13 +161,12 @@ public class EmployeeService {
 
 
         if (employee.isPresent()) {
-            if (employee.get().getType().equalsIgnoreCase("admin")){
+            if (employee.get().getType().equalsIgnoreCase("admin")) {
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successful");
                 apiResponse.setData(workLogRepo.findAll());
                 return apiResponse;
-            }
-            else {
+            } else {
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successful");
                 apiResponse.setData(employee.get().getWorkLogList());

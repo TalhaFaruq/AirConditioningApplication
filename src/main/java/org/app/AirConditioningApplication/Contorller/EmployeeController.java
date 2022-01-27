@@ -27,12 +27,12 @@ public class EmployeeController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody Employee employee) {
+    public ApiResponse add(@RequestBody Employee employee) {
         return employeeService.save(employee);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Object> update(@RequestBody Employee employee) {
+    public ApiResponse update(@RequestBody Employee employee) {
         return employeeService.save(employee);
     }
 
