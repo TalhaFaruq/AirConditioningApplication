@@ -28,7 +28,6 @@ public class EmployeeService {
 
     public ResponseEntity<Object> save(Employee employee) {
         try {
-            List<WorkLog> workLogList = employee.getWorkLogList();
             employeeRepo.save(employee);
             return ResponseEntity.accepted().body(employee);
         } catch (Exception e) {
