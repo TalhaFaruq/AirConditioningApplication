@@ -1,4 +1,4 @@
-package org.app.AirConditioningApplication.Controller;
+package org.app.AirConditioningApplication.Contorller;
 
 import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Service.BudgetService;

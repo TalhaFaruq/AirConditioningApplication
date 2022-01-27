@@ -1,4 +1,4 @@
-package org.app.AirConditioningApplication.Controller;
+package org.app.AirConditioningApplication.Contorller;
 
 import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Service.OrderService;
