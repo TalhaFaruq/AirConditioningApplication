@@ -1,14 +1,12 @@
 package org.app.AirConditioningApplication.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +21,7 @@ public class SupplierProduct {
     private String characteristics;
     private double basePrice;
     private double tax;
+    @Transient
+    private int productCount;
+
 }

@@ -3,6 +3,8 @@ package org.app.AirConditioningApplication.Model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -10,8 +12,10 @@ import java.util.UUID;
 @Table(name = "purchased_history_from_supplier")
 public class SupplierPurchasedHistory {
     @Id
-    private String orderId = UUID.randomUUID().toString();
+    private String supplierOrderId = UUID.randomUUID().toString();
     private double totalPrice;
-    @OneToOne
-    private SupplierProduct product;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "supplier_order_id", referencedColumnName = "supplierOrderId")
+    List<SupplierProduct> supplierProducts = new ArrayList<>();
 }
