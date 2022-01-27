@@ -1,6 +1,8 @@
 package org.app.AirConditioningApplication.Service;
 
-import org.app.AirConditioningApplication.Model.*;
+import org.app.AirConditioningApplication.Model.Employee;
+import org.app.AirConditioningApplication.Model.Order;
+import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Repository.EmployeeRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
 import org.app.AirConditioningApplication.Repository.WorkLogRepo;
@@ -95,11 +97,14 @@ public class EmployeeService {
     }
 
 
-    //Worklog will only be shown by the email.
+    //WorkLog will only be shown by the email.
     public ResponseEntity<Object> showWorkLog(String email){
         Optional<Employee> employee = employeeRepo.findEmployeeByEmail(email);
-        if(employee.isPresent()){
-            return ResponseEntity.ok().body(employee.get().getWorkLogList());
+        if(employee.isPresent()) {
+            if (employee.get().getType().equalsIgnoreCase("admin"))
+                return ResponseEntity.accepted().body(workLogRepo.findAll());
+            else
+                return ResponseEntity.ok().body(employee.get().getWorkLogList());
         }else return ResponseEntity.ok().body("The email is invalid");
     }
 }
