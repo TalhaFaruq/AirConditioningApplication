@@ -21,7 +21,6 @@ public class SupplierProduct {
     private String characteristics;
     private double basePrice;
     private double tax;
-    @Transient
     private int productCount;
 
 }

@@ -1,6 +1,5 @@
-package org.app.AirConditioningApplication.Contorller;
+package org.app.AirConditioningApplication.Controller;
 
-import org.app.AirConditioningApplication.Model.Employee;
 import org.app.AirConditioningApplication.Model.SupplierPurchasedHistory;
 import org.app.AirConditioningApplication.Service.SupplierPurchasedHistoryService;
 import org.app.AirConditioningApplication.response.ApiResponse;

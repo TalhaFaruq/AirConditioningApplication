@@ -1,14 +1,10 @@
-package org.app.AirConditioningApplication.Contorller;
+package org.app.AirConditioningApplication.Controller;
 
 import org.app.AirConditioningApplication.Model.Employee;
 import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Service.EmployeeService;
 import org.app.AirConditioningApplication.response.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @CrossOrigin
 @RestController
