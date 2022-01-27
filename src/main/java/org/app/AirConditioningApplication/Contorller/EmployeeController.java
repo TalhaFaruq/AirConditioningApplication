@@ -37,7 +37,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Object> delete(@RequestParam Long Id) {
+    public ApiResponse delete(@RequestParam Long Id) {
         return employeeService.delete(Id);
     }
 
@@ -48,13 +48,13 @@ public class EmployeeController {
 
     //This api will add workLog against employee because employee will exist for worklog
     @PostMapping("/addWorkLog")
-    public ResponseEntity<Object> addWorkLog(@RequestParam String email, @RequestBody WorkLog workLog) {
+    public ApiResponse addWorkLog(@RequestParam String email, @RequestBody WorkLog workLog) {
         return employeeService.addNewWorkLog(email, workLog);
     }
 
     //This api will only show workLog by email of employee
     @GetMapping("/GetWorkLogByEmail")
-    public ResponseEntity<Object> workLogByEmail(@RequestParam String email){
+    public ApiResponse workLogByEmail(@RequestParam String email){
         return employeeService.showWorkLog(email);
     }
 

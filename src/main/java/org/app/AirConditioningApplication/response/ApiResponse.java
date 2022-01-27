@@ -9,8 +9,7 @@ import java.util.List;
 @Component
 @Data
 public class ApiResponse {
-    String status;
+    Integer status;
     String message;
-//    List<Object> data = new ArrayList<>();
     Object data = new Object();
 }

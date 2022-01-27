@@ -46,16 +46,18 @@ public class EmployeeService {
 
             if (employeeList.isEmpty()) {
                 apiResponse.setMessage("There is no employee in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+
             } else {
                 apiResponse.setMessage("Successful");
                 apiResponse.setData(employeeList);
+                apiResponse.setStatus(HttpStatus.OK.value());
             }
-            apiResponse.setStatus(HttpStatus.OK.toString());
 
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setMessage(e.getMessage());
-            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
         }
     }
@@ -68,26 +70,25 @@ public class EmployeeService {
             Optional<Employee> employee = employeeRepo.findById(Id);
 
             if (employee.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successful");
                 apiResponse.setData(employee);
-
-//                apiResponse.getData().add(employee.get());
             } else {
                 apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no employee in the database");
             }
-            apiResponse.setStatus(HttpStatus.OK.toString());
             return apiResponse;
 
         } catch (Exception e) {
             apiResponse.setMessage(e.getMessage());
-            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> delete(Long Id) {
+    public ApiResponse delete(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
 
         try {
@@ -96,17 +97,28 @@ public class EmployeeService {
                 employee.get().setWorkLogList(null);
                 employeeRepo.delete(employee.get());
 
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Deleted");
 
-                return ResponseEntity.ok().body("Deleted");
-            } else return ResponseEntity.ok().body("Invalid Id");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
+
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
     // The employee will tell how many hour will the work take. So after order is saved then the id of employee with order id needed to put
     // the working hours in the database and calculate the price
-    public ResponseEntity<Object> addNewWorkLog(String email, WorkLog workLog) {
+    public ApiResponse addNewWorkLog(String email, WorkLog workLog) {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             Optional<Employee> emp = employeeRepo.findEmployeeByEmail(email);
             if (emp.isPresent()) {
@@ -117,23 +129,50 @@ public class EmployeeService {
                 }
                 emp.get().getWorkLogList().add(workLog);
                 employeeRepo.save(emp.get());
-                return ResponseEntity.ok().body(emp);
-            } else return ResponseEntity.ok().body("The Employee or Order does not exist");
+
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Work log added");
+                apiResponse.setData(emp.get());
+
+                return apiResponse;
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee against this ID");
+                return apiResponse;
+            }
         } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
     //WorkLog will only be shown by the email.
-    public ResponseEntity<Object> showWorkLog(String email) {
+    public ApiResponse showWorkLog(String email) {
         Optional<Employee> employee = employeeRepo.findEmployeeByEmail(email);
+        ApiResponse apiResponse = new ApiResponse();
+
+
         if (employee.isPresent()) {
-            if (employee.get().getType().equalsIgnoreCase("admin"))
-                return ResponseEntity.accepted().body(workLogRepo.findAll());
-            else
-                return ResponseEntity.ok().body(employee.get().getWorkLogList());
-        } else return ResponseEntity.ok().body("The email is invalid");
+            if (employee.get().getType().equalsIgnoreCase("admin")){
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(workLogRepo.findAll());
+                return apiResponse;
+            }
+            else {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(employee.get().getWorkLogList());
+                return apiResponse;
+            }
+
+        } else {
+            apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            apiResponse.setMessage("There is no user against this id");
+            apiResponse.setData(null);
+            return apiResponse;
+        }
     }
 }
