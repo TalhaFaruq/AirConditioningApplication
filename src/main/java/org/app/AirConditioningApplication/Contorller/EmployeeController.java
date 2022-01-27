@@ -3,12 +3,18 @@ package org.app.AirConditioningApplication.Contorller;
 import org.app.AirConditioningApplication.Model.Employee;
 import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Service.EmployeeService;
+import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping("Employee")
 public class EmployeeController {
+
     private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
@@ -16,7 +22,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Object> list() {
+    public ApiResponse list() {
         return employeeService.showAll();
     }
 
@@ -36,7 +42,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/getByID")
-    public ResponseEntity<Object> getById(@RequestParam Long Id) {
+    public ApiResponse getById(@RequestParam Long Id) {
         return employeeService.getById(Id);
     }
 
