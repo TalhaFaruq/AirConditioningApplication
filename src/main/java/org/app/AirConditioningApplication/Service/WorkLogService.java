@@ -2,7 +2,8 @@ package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Repository.WorkLogRepo;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,52 +18,90 @@ public class WorkLogService {
         this.workLogRepo = workLogRepo;
     }
 
-    public ResponseEntity<Object> save(WorkLog workLog) {
+    public ApiResponse save(WorkLog workLog) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             workLog.setDate(LocalDate.now());
             workLogRepo.save(workLog);
-            return ResponseEntity.accepted().body(workLog);
+
+            apiResponse.setMessage("Successfully added in the database");
+            apiResponse.setData(workLog);
+            apiResponse.setStatus(HttpStatus.OK.value());
+
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> showAll() {
+    public ApiResponse showAll() {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             List<WorkLog> workLogList = workLogRepo.findAll();
-            if (!workLogList.isEmpty())
-                return ResponseEntity.ok().body(workLogList);
-            else
-                return ResponseEntity.ok().body("There are no workLogs");
+            if (workLogList.isEmpty()) {
+                apiResponse.setMessage("There is no work log in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            } else {
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(workLogList);
+                apiResponse.setStatus(HttpStatus.OK.value());
+            }
+            return apiResponse;
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
+    public ApiResponse getById(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
 
-    public ResponseEntity<Object> getById(Long Id) {
         try {
             Optional<WorkLog> workLog = workLogRepo.findById(Id);
-            if (workLog.isPresent())
-                return ResponseEntity.ok().body(workLog);
-            else return ResponseEntity.ok().body("Invalid ID");
+            if (workLog.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully fetched the work log");
+                apiResponse.setData(workLog);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee in the database");
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> delete(Long Id) {
+    public ApiResponse delete(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<WorkLog> workLog = workLogRepo.findById(Id);
             if (workLog.isPresent()) {
                 workLog.get().setOrder(null);
                 workLogRepo.delete(workLog.get());
-                return ResponseEntity.ok().body("Deleted");
-            }else return ResponseEntity.ok().body("Invalid ID");
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 }

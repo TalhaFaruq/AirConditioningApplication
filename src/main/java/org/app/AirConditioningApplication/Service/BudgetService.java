@@ -5,7 +5,8 @@ import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
 import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,64 +18,88 @@ public class BudgetService {
     private final ProductRepo productRepo;
 
 
-
     public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo) {
         this.budgetRepo = budgetRepo;
 
         this.productRepo = productRepo;
     }
 
-    public ResponseEntity<Object> save(Budget budget) {
+    public ApiResponse save(Budget budget) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             //As the budget is Quotation, order is final receipt
             budget.setBudgetStatus("Pending");
             if (!budget.getProductList().isEmpty()) {
-                List<Product> products =  budget.getProductList();
+                List<Product> products = budget.getProductList();
                 //this stream will get the sum of all the products
-                for (Product product:products) {
+                for (Product product : products) {
                     Optional<Product> product1 = productRepo.findById(product.getProductId());
                     budget.setTotalPrice(budget.getTotalPrice() + product1.get().getPrice());
                 }
-//                budget.setTotalPrice(products.stream().mapToInt(Product::getPrice).sum());
-//                budget.getProductList().stream().forEach(product -> product.setQuantityInStock(product.getQuantityInStock()-1));
             }
 
+            apiResponse.setMessage("Budget Successfully added in the database");
+            apiResponse.setData(budget);
+            apiResponse.setStatus(HttpStatus.OK.value());
             // This will create pdf of budget
 
             budgetRepo.save(budget);
-            return ResponseEntity.accepted().body(budget);
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> showAll() {
+    public ApiResponse showAll() {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             List<Budget> budgetList = budgetRepo.findAll();
-            if (!budgetList.isEmpty())
-                return ResponseEntity.ok().body(budgetList);
-            else
-                return ResponseEntity.ok().body("There are no Budgets");
+            if (!budgetList.isEmpty()) {
+                apiResponse.setMessage("Successfully fetched the budget list");
+                apiResponse.setData(budgetList);
+                apiResponse.setStatus(HttpStatus.OK.value());
+            } else {
+                apiResponse.setMessage("There is no budget in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> getById(Long Id) {
+    public ApiResponse getById(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Budget> budget = budgetRepo.findById(Id);
-            if (budget.isPresent())
-                return ResponseEntity.ok().body(budget);
-            else return ResponseEntity.ok().body("Invalid Id");
+            if (budget.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(budget);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no budget in the database");
+            }
+            return apiResponse;
+
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> delete(Long Id) {
+    public ApiResponse delete(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Budget> budget = budgetRepo.findById(Id);
             if (budget.isPresent()) {
@@ -82,16 +107,25 @@ public class BudgetService {
                 budget.get().setService(null);
                 budget.get().setCustomer(null);
                 budgetRepo.delete(budget.get());
-                return ResponseEntity.ok().body("Deleted");
-            } else return ResponseEntity.ok().body("Invalid ID");
+
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Budget is Successfully Deleted");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no budget against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
 
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
     // For testing purpose (Test pass)
-    public void pdfCall(Long budgetId){
+    public void pdfCall(Long budgetId) {
         PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budgetRepo.findById(budgetId).get());
         pdfBudgetTable.pdfdownload();
     }

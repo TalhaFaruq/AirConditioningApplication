@@ -2,7 +2,8 @@ package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,63 +17,109 @@ public class ProductService {
         this.productRepo = productRepo;
     }
 
-    public ResponseEntity<Object> save(Product product) {
+    public ApiResponse save(Product product) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             productRepo.save(product);
-            return ResponseEntity.accepted().body(product);
+            apiResponse.setMessage("Successfully added in the database");
+            apiResponse.setData(product);
+            apiResponse.setStatus(HttpStatus.OK.value());
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> showAll() {
+    public ApiResponse showAll() {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             List<Product> productList = productRepo.findAll();
-            if (!productList.isEmpty())
-                return ResponseEntity.ok().body(productList);
-            else
-                return ResponseEntity.ok().body("There are no products");
+            if (!productList.isEmpty()) {
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(productList);
+                apiResponse.setStatus(HttpStatus.OK.value());
+            } else {
+                apiResponse.setMessage("There is no employee in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> getById(Long Id) {
+    public ApiResponse getById(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Product> product = productRepo.findById(Id);
-            if(product.isPresent())
-                return ResponseEntity.ok().body(product);
-            else return ResponseEntity.ok().body("Invalid ID");
+            if (product.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(product);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no product in the database");
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> delete(Long Id) {
+    public ApiResponse delete(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Product> product = productRepo.findById(Id);
-            if(product.isPresent()){
+            if (product.isPresent()) {
                 productRepo.delete(product.get());
-                return ResponseEntity.ok().body("Deleted");
-            }else return ResponseEntity.ok().body("Invalid ID");
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no product against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
-    public ResponseEntity<Object> productQuantity(Long id, int quantity){
+    public ApiResponse productQuantity(Long id, int quantity) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Product> product = productRepo.findById(id);
-            if(product.isPresent()){
-                product.get().setQuantityInStock(product.get().getQuantityInStock()+quantity);
+            if (product.isPresent()) {
+                product.get().setQuantityInStock(product.get().getQuantityInStock() + quantity);
                 productRepo.save(product.get());
-                return ResponseEntity.ok().body(product);
-            }else return ResponseEntity.ok().body("Invalid ID");
+
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Quantity added");
+                apiResponse.setData(product.get());
+
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no product against this ID");
+                apiResponse.setData(null);
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 }
