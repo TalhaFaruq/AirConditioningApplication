@@ -2,7 +2,8 @@ package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Customer;
 import org.app.AirConditioningApplication.Repository.CustomerRepo;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,50 +17,86 @@ public class CustomerService {
         this.customerRepo = customerRepo;
     }
 
-    public ResponseEntity<Object> save(Customer customer) {
+    public ApiResponse save(Customer customer) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             customerRepo.save(customer);
-            return ResponseEntity.accepted().body(customer);
+            apiResponse.setMessage("Successfully added the customer in the database");
+            apiResponse.setData(customer);
+            apiResponse.setStatus(HttpStatus.OK.value());
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> showAll() {
+    public ApiResponse showAll() {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             List<Customer> customerList = customerRepo.findAll();
-            if (!customerList.isEmpty())
-                return ResponseEntity.ok().body(customerList);
-            else
-                return ResponseEntity.ok().body("There are no employees");
+            if (!customerList.isEmpty()) {
+                apiResponse.setMessage("Successfully fetched the customers list");
+                apiResponse.setData(customerList);
+                apiResponse.setStatus(HttpStatus.OK.value());
+            } else {
+                apiResponse.setMessage("There is no customer in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> getById(Long Id) {
+    public ApiResponse getById(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             Optional<Customer> customer = customerRepo.findById(Id);
-            if(customer.isPresent())
-                return ResponseEntity.ok().body(customer);
-            else return ResponseEntity.ok().body("Invalid Id");
+            if (customer.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully fetched the customer");
+                apiResponse.setData(customer);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee in the database");
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> delete(Long Id) {
+    public ApiResponse delete(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             Optional<Customer> customer = customerRepo.findById(Id);
-            if(customer.isPresent()){
+            if (customer.isPresent()) {
                 customerRepo.delete(customer.get());
-                return ResponseEntity.ok().body("Deleted");
-            }else return ResponseEntity.ok().body("Invalid Id");
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted the customer");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
