@@ -3,7 +3,6 @@ package org.app.AirConditioningApplication.Contorller;
 import org.app.AirConditioningApplication.Model.Supplier;
 import org.app.AirConditioningApplication.Service.SupplierService;
 import org.app.AirConditioningApplication.response.ApiResponse;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,25 +33,25 @@ public class SupplierController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Object> delete(@RequestParam Long Id) {
+    public ApiResponse delete(@RequestParam Long Id) {
         return supplierService.delete(Id);
     }
 
     @GetMapping("/getByID")
-    public ResponseEntity<Object> getById(@RequestParam Long Id) {
+    public ApiResponse getById(@RequestParam Long Id) {
         return supplierService.getById(Id);
     }
 
     @PostMapping("/buyProductFromSupplier")
     @ResponseBody
-    public void buyProductFromSupplier(@RequestBody Supplier supplier, @RequestParam(name = "quantity") Integer quantityToBuy) {
-        supplierService.buyProductsFromSupplier(supplier, quantityToBuy);
+    public ApiResponse buyProductFromSupplier(@RequestBody Supplier supplier, @RequestParam(name = "quantity") Integer quantityToBuy) {
+        return supplierService.buyProductsFromSupplier(supplier, quantityToBuy);
     }
 
     @PostMapping("/buyMultipleProductFromSupplier")
     @ResponseBody
-    public void buyMultipleProductFromSupplier(@RequestBody List<Supplier> supplierList) {
-        supplierService.buyMultipleProductsFromSupplier(supplierList);
+    public ApiResponse buyMultipleProductFromSupplier(@RequestBody List<Supplier> supplierList) {
+        return supplierService.buyMultipleProductsFromSupplier(supplierList);
     }
 
 }

@@ -9,7 +9,6 @@ import org.app.AirConditioningApplication.Repository.SupplierPurchasedHistoryRep
 import org.app.AirConditioningApplication.Repository.SupplierRepo;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,11 +65,17 @@ public class SupplierService {
     }
 
 
-    public void buyProductsFromSupplier(Supplier supplier, Integer quantityToBuy) {
+    public ApiResponse buyProductsFromSupplier(Supplier supplier, Integer quantityToBuy) {
+        ApiResponse apiResponse = new ApiResponse();
+
         Optional<Product> optionalProduct = productRepo.findByName(supplier.getSupplierProducts().get(0).getName());
         if (optionalProduct.isPresent()) {
             optionalProduct.get().setQuantityInStock(optionalProduct.get().getQuantityInStock() + quantityToBuy);
             productRepo.save(optionalProduct.get());
+
+            apiResponse.setStatus(HttpStatus.OK.value());
+            apiResponse.setMessage("Successfully updated the stock in products");
+            apiResponse.setData(supplier);
         } else {
             Product product = new Product();
             product.setName(supplier.getSupplierProducts().get(0).getName());
@@ -80,10 +85,15 @@ public class SupplierService {
             product.setPrice(supplier.getSupplierProducts().get(0).getBasePrice() + ((supplier.getSupplierProducts().get(0).getTax() / 100) * supplier.getSupplierProducts().get(0).getBasePrice()));
             product.setCharacteristics(supplier.getSupplierProducts().get(0).getCharacteristics());
             productRepo.save(product);
+
+            apiResponse.setStatus(HttpStatus.OK.value());
+            apiResponse.setMessage("Successfully purchased the product from supplier");
+            apiResponse.setData(supplier);
         }
+        return apiResponse;
     }
 
-    public void buyMultipleProductsFromSupplier(List<Supplier> supplierList) {
+    public ApiResponse buyMultipleProductsFromSupplier(List<Supplier> supplierList) {
         ApiResponse apiResponse = new ApiResponse();
 
         SupplierPurchasedHistory purchasedHistory = new SupplierPurchasedHistory();
@@ -115,31 +125,51 @@ public class SupplierService {
         apiResponse.setMessage("Products Purchased");
         apiResponse.setData(purchasedHistory);
         supplierPurchasedHistoryRepository.save(purchasedHistory);
+        return apiResponse;
     }
 
 
-    public ResponseEntity<Object> getById(Long Id) {
+    public ApiResponse getById(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Supplier> supplier = supplierRepo.findById(Id);
-            if (supplier.isPresent())
-                return ResponseEntity.ok().body(supplier);
-            else return ResponseEntity.ok().body("Invalid ID");
+            if (supplier.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully fetched the supplier");
+                apiResponse.setData(supplier);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee in the database");
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> delete(Long Id) {
+    public ApiResponse delete(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Supplier> supplier = supplierRepo.findById(Id);
             if (supplier.isPresent()) {
                 supplier.get().setSupplierProducts(null);
                 supplierRepo.delete(supplier.get());
-                return ResponseEntity.ok().body("Deleted");
-            } else return ResponseEntity.ok().body("Invalid ID");
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 }

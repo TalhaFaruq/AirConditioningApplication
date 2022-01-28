@@ -4,7 +4,6 @@ import org.app.AirConditioningApplication.Model.WorkLog;
 import org.app.AirConditioningApplication.Repository.WorkLogRepo;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -66,13 +65,11 @@ public class WorkLogService {
 
         try {
             Optional<WorkLog> workLog = workLogRepo.findById(Id);
-            if (workLog.isPresent())
-            {
+            if (workLog.isPresent()) {
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successfully fetched the work log");
                 apiResponse.setData(workLog);
-            }
-            else {
+            } else {
                 apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no employee in the database");
@@ -99,6 +96,7 @@ public class WorkLogService {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no employee against this ID");
             }
+            apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setMessage(e.getMessage());
