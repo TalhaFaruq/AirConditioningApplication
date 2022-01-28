@@ -41,4 +41,9 @@ public class SupplierPurchasedHistoryController {
         return supplierPurchasedHistoryService.getById(id);
     }
 
+    @GetMapping("/downloadPdf")
+    public ApiResponse downloadSupplierPurchasedHistory(@RequestParam String id){
+        return supplierPurchasedHistoryService.pdfDownload(id);
+    }
+
 }
