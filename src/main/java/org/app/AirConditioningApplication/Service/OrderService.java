@@ -5,13 +5,13 @@ import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
 import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -23,42 +23,69 @@ public class OrderService {
         this.budgetRepo = budgetRepo;
     }
 
-    public ResponseEntity<Object> save(Order order) {
+    public ApiResponse save(Order order) {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             orderRepo.save(order);
-            return ResponseEntity.accepted().body(order);
+            apiResponse.setMessage("Successfully added in the database");
+            apiResponse.setData(order);
+            apiResponse.setStatus(HttpStatus.OK.value());
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> showAll() {
+    public ApiResponse showAll() {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             List<Order> orderList = orderRepo.findAll();
-            if (!orderList.isEmpty())
-                return ResponseEntity.ok().body(orderList);
-            else
-                return ResponseEntity.ok().body("There are no orders");
+            if (!orderList.isEmpty()) {
+                apiResponse.setMessage("Successfully fetched the order list");
+                apiResponse.setData(orderList);
+                apiResponse.setStatus(HttpStatus.OK.value());
+            } else {
+                apiResponse.setMessage("There is no employee in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> getById(Long Id) {
+    public ApiResponse getById(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Order> order = orderRepo.findById(Id);
-            if (order.isPresent())
-                return ResponseEntity.ok().body(order);
-            else return ResponseEntity.ok().body("Invalid ID");
+            if (order.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successful");
+                apiResponse.setData(order);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no order in the database");
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> delete(Long Id) {
+    public ApiResponse delete(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<Order> order = orderRepo.findById(Id);
             if (order.isPresent()) {
@@ -66,23 +93,35 @@ public class OrderService {
                 order.get().setCustomer(null);
                 order.get().setProductList(null);
                 orderRepo.delete(order.get());
-                return ResponseEntity.ok().body("Deleted");
-            } else return ResponseEntity.ok().body("Invalid ID");
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no employee against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
     //when the order is conformed it will change into order
-    public ResponseEntity<Object> budgetToOrder(Long id) {
+    public ApiResponse budgetToOrder(Long id) {
+        ApiResponse apiResponse = new ApiResponse();
+
         Optional<Budget> budget = budgetRepo.findById(id);
         if (budget.isPresent()) {
             Order order = new Order();
             budget.get().setBudgetStatus("Completed");
             List<Order> orderList = orderRepo.findAll();
-            if (orderList.size()==0){
+            /*if (orderList.size() == 0) {
                 order.setOrderId(1L);
-            }else order.setOrderId((long) orderList.size() +1);
+            } else {
+                order.setOrderId((long) orderList.size() + 1);
+            }*/
             order.setService((budget.get().getService()));
             order.setCustomer(budget.get().getCustomer());
             order.setProductList(new ArrayList<>(budget.get().getProductList()));
@@ -90,17 +129,26 @@ public class OrderService {
 
             orderRepo.save(order);
             budgetRepo.save(budget.get());
-
-            return ResponseEntity.ok().body("PDF Downloaded");
+            apiResponse.setStatus(HttpStatus.OK.value());
+            apiResponse.setMessage("Successfully downloaded the pdf");
+            apiResponse.setData(order);
+            return apiResponse;
+        } else {
+            apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            apiResponse.setMessage("There is no budget against this ID");
+            return apiResponse;
         }
-        else return ResponseEntity.ok().body("Invalid ID");
     }
 
     //Must be called after order is saved in database with worklog
-    public ResponseEntity<Object> printPdf(Long id){
+    public ApiResponse printPdf(Long id) {
+        ApiResponse apiResponse = new ApiResponse();
         //Pdf will be downloaded in downloads
         PdfOrderTable pdfOrderTable = new PdfOrderTable(orderRepo.findById(id).get());
         pdfOrderTable.pdfdownload();
-        return ResponseEntity.accepted().body("Pdf downloaded");
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Successfully downloaded the pdf");
+        apiResponse.setData(orderRepo.findById(id).get());
+        return apiResponse;
     }
 }

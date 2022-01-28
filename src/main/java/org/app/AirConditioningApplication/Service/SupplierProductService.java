@@ -1,13 +1,15 @@
 package org.app.AirConditioningApplication.Service;
 
+/*
 import org.app.AirConditioningApplication.Model.SupplierProduct;
-import org.app.AirConditioningApplication.Repository.ProductRepo;
 import org.app.AirConditioningApplication.Repository.SupplierProductRepo;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class SupplierProductService {
     private final SupplierProductRepo supplierProductRepo;
 
@@ -43,7 +45,7 @@ public class SupplierProductService {
     public ResponseEntity<Object> getById(Long Id) {
         try {
             Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(Id);
-            if(supplierProduct.isPresent())
+            if (supplierProduct.isPresent())
                 return ResponseEntity.ok().body(supplierProduct);
             else return ResponseEntity.ok().body("Invalid ID");
         } catch (Exception e) {
@@ -55,12 +57,13 @@ public class SupplierProductService {
     public ResponseEntity<Object> delete(Long Id) {
         try {
             Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(Id);
-            if(supplierProduct.isPresent()){
+            if (supplierProduct.isPresent()) {
                 supplierProductRepo.delete(supplierProduct.get());
                 return ResponseEntity.ok().body("Deleted");
-            }else return ResponseEntity.ok().body("Invalid ID");
+            } else return ResponseEntity.ok().body("Invalid ID");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
     }
 }
+*/

@@ -29,7 +29,6 @@ public class EmployeeService {
 
     public ApiResponse save(Employee employee) {
         ApiResponse apiResponse = new ApiResponse();
-
         try {
             employeeRepo.save(employee);
             apiResponse.setMessage("Successfully added in the database");

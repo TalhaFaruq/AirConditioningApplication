@@ -2,8 +2,9 @@ package org.app.AirConditioningApplication.Contorller;
 
 import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Service.OrderService;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
+
 @CrossOrigin
 @RestController
 @RequestMapping("Order")
@@ -15,38 +16,38 @@ public class OrderController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Object> list() {
+    public ApiResponse list() {
         return orderService.showAll();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody Order order) {
+    public ApiResponse add(@RequestBody Order order) {
         return orderService.save(order);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Object> update(@RequestBody Order order) {
+    public ApiResponse update(@RequestBody Order order) {
         return orderService.save(order);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Object> delete(@RequestParam Long Id) {
+    public ApiResponse delete(@RequestParam Long Id) {
         return orderService.delete(Id);
     }
 
     @GetMapping("/getByID")
-    public ResponseEntity<Object> getById(@RequestParam Long Id) {
+    public ApiResponse getById(@RequestParam Long Id) {
         return orderService.getById(Id);
     }
 
     // When this api is called the pdf of order is also downloaded
     @GetMapping("/budgetToOrder")
-    public ResponseEntity<Object> budgetToOrder(@RequestParam Long Id) {
+    public ApiResponse budgetToOrder(@RequestParam Long Id) {
         return orderService.budgetToOrder(Id);
     }
 
     @GetMapping("/printPdfOrder")
-    public ResponseEntity<Object> pdfDownloader(@RequestParam Long Id){
+    public ApiResponse pdfDownloader(@RequestParam Long Id) {
         return orderService.printPdf(Id);
     }
 
