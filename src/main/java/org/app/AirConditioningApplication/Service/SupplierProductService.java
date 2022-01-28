@@ -4,10 +4,11 @@ import org.app.AirConditioningApplication.Model.SupplierProduct;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
 import org.app.AirConditioningApplication.Repository.SupplierProductRepo;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class SupplierProductService {
     private final SupplierProductRepo supplierProductRepo;
 

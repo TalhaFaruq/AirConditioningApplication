@@ -2,6 +2,7 @@ package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.SupplierPurchasedHistory;
 import org.app.AirConditioningApplication.Repository.SupplierPurchasedHistoryRepository;
+import org.app.AirConditioningApplication.Utilities.PdfSupplierPurchase;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -94,6 +95,30 @@ public class SupplierPurchasedHistoryService {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
             }
+            return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
+
+    public ApiResponse pdfDownload(String id) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Optional<SupplierPurchasedHistory> supplierPurchasedHistory = supplierPurchasedHistoryRepository.findById(id);
+            if (supplierPurchasedHistory.isPresent()) {
+                PdfSupplierPurchase pdfSupplierPurchase = new PdfSupplierPurchase(supplierPurchasedHistory.get());
+
+                pdfSupplierPurchase.pdfdownload();
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successful");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
+            }
+
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setMessage(e.getMessage());
