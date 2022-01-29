@@ -2,6 +2,8 @@ package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Model.Order;
+import org.app.AirConditioningApplication.Model.Product;
+import org.app.AirConditioningApplication.Model.Services;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
 import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
@@ -9,9 +11,10 @@ import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -116,28 +119,42 @@ public class OrderService {
         if (budget.isPresent()) {
             Order order = new Order();
             budget.get().setBudgetStatus("Completed");
-            List<Order> orderList = orderRepo.findAll();
+
+//            List<Order> orderList = orderRepo.findAll();
             /*if (orderList.size() == 0) {
                 order.setOrderId(1L);
             } else {
                 order.setOrderId((long) orderList.size() + 1);
             }*/
-            order.setService((budget.get().getService()));
+            List<Services> serviceList = budget.get().getService();
+            for (Services service1: serviceList
+                 ) {
+                order.getService().add(service1);
+            }
+//            order.setService((budget.get().getService()));
             order.setCustomer(budget.get().getCustomer());
-            order.setProductList(new ArrayList<>(budget.get().getProductList()));
+            List<Product> productList = budget.get().getProductList();
+            for (Product product : productList
+            ) {
+                order.getProductList().add(product);
+
+            }
+//            Iterator it = budget.get().getProductList().iterator();
+//            while (it.hasNext())
+//                order.setProductList(order.getProductList().add(budget.get().getProductList().get()));
+//            order.setProductList(budget.get().getProductList().stream().collect(Collectors.toList()));
             order.setTotalPrice(budget.get().getTotalPrice());
 
             orderRepo.save(order);
             budgetRepo.save(budget.get());
             apiResponse.setStatus(HttpStatus.OK.value());
-            apiResponse.setMessage("Successfully downloaded the pdf");
+            apiResponse.setMessage("Successfully Order created");
             apiResponse.setData(order);
-            return apiResponse;
         } else {
             apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
             apiResponse.setMessage("There is no budget against this ID");
-            return apiResponse;
         }
+        return apiResponse;
     }
 
     //Must be called after order is saved in database with worklog
