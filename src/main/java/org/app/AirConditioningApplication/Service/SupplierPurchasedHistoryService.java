@@ -28,6 +28,7 @@ public class SupplierPurchasedHistoryService {
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -39,7 +40,7 @@ public class SupplierPurchasedHistoryService {
         List<SupplierPurchasedHistory> supplierPurchasedHistories = supplierPurchasedHistoryRepository.findAll();
         try {
             if (supplierPurchasedHistories.isEmpty()) {
-                apiResponse.setMessage("There is no Purchased in the database");
+                apiResponse.setMessage("There is no purchased history in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setData(null);
 
@@ -51,6 +52,7 @@ public class SupplierPurchasedHistoryService {
 
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -74,6 +76,7 @@ public class SupplierPurchasedHistoryService {
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -98,6 +101,7 @@ public class SupplierPurchasedHistoryService {
             apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -123,6 +127,7 @@ public class SupplierPurchasedHistoryService {
 
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;

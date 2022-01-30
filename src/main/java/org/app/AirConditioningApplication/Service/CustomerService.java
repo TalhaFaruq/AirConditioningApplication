@@ -26,6 +26,7 @@ public class CustomerService {
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -48,6 +49,7 @@ public class CustomerService {
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -67,10 +69,11 @@ public class CustomerService {
             } else {
                 apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no employee in the database");
+                apiResponse.setMessage("There is no customer in the database");
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -89,11 +92,12 @@ public class CustomerService {
                 apiResponse.setMessage("Successfully Deleted the customer");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no employee against this ID");
+                apiResponse.setMessage("There is no customer against this ID");
             }
             apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;

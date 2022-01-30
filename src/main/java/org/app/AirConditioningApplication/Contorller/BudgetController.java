@@ -28,7 +28,7 @@ public class BudgetController {
 
     @PutMapping("/update")
     public ApiResponse update(@RequestBody Budget budget) {
-        return budgetService.save(budget);
+        return budgetService.update(budget);
     }
 
     @DeleteMapping("/delete")

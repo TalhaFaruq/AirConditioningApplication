@@ -37,7 +37,7 @@ public class SupplierService {
                 apiResponse.setData(supplierList);
                 apiResponse.setStatus(HttpStatus.OK.value());
             } else {
-                apiResponse.setMessage("There is no work log in the database");
+                apiResponse.setMessage("There is no suppliers in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setData(null);
             }
@@ -73,10 +73,7 @@ public class SupplierService {
         if (optionalProduct.isPresent()) {
             optionalProduct.get().setQuantityInStock(optionalProduct.get().getQuantityInStock() + quantityToBuy);
             productRepo.save(optionalProduct.get());
-
-            apiResponse.setStatus(HttpStatus.OK.value());
             apiResponse.setMessage("Successfully updated the stock in products");
-            apiResponse.setData(supplier);
         } else {
             Product product = new Product();
             product.setName(supplier.getSupplierProducts().get(0).getName());
@@ -87,10 +84,10 @@ public class SupplierService {
             product.setCharacteristics(supplier.getSupplierProducts().get(0).getCharacteristics());
             productRepo.save(product);
 
-            apiResponse.setStatus(HttpStatus.OK.value());
             apiResponse.setMessage("Successfully purchased the product from supplier");
-            apiResponse.setData(supplier);
         }
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setData(supplier);
         return apiResponse;
     }
 
@@ -141,10 +138,11 @@ public class SupplierService {
             } else {
                 apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no employee in the database");
+                apiResponse.setMessage("There is no supplier in the database");
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -160,14 +158,15 @@ public class SupplierService {
                 supplier.get().setSupplierProducts(null);
                 supplierRepo.delete(supplier.get());
                 apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successfully Deleted");
+                apiResponse.setMessage("Successfully Deleted the supplier");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no employee against this ID");
+                apiResponse.setMessage("There is no supplier against this ID");
             }
             apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
