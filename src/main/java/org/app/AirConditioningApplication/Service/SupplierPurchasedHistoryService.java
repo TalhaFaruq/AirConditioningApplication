@@ -34,7 +34,6 @@ public class SupplierPurchasedHistoryService {
         }
     }
 
-
     public ApiResponse showAll() {
         ApiResponse apiResponse = new ApiResponse();
         List<SupplierPurchasedHistory> supplierPurchasedHistories = supplierPurchasedHistoryRepository.findAll();
@@ -42,6 +41,7 @@ public class SupplierPurchasedHistoryService {
             if (supplierPurchasedHistories.isEmpty()) {
                 apiResponse.setMessage("There is no Purchased in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
 
             } else {
                 apiResponse.setMessage("Successful");
@@ -89,13 +89,13 @@ public class SupplierPurchasedHistoryService {
             if (supplierPurchasedHistory.isPresent()) {
                 supplierPurchasedHistory.get().setSupplierProducts(null);
                 supplierPurchasedHistoryRepository.delete(supplierPurchasedHistory.get());
-                apiResponse.setData(supplierPurchasedHistory);
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successful");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no purchased history against this ID");
             }
+            apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setMessage(e.getMessage());
@@ -112,12 +112,13 @@ public class SupplierPurchasedHistoryService {
                 PdfSupplierPurchase pdfSupplierPurchase = new PdfSupplierPurchase(supplierPurchasedHistory.get());
 
                 pdfSupplierPurchase.pdfdownload();
-                apiResponse.setData(null);
+                apiResponse.setData(supplierPurchasedHistory);
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successfully downloaded the pdf");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no purchased history against this ID");
+                apiResponse.setData(null);
             }
 
             return apiResponse;
