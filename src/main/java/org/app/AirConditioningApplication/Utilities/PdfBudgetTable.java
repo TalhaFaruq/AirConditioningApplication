@@ -24,14 +24,14 @@ public class PdfBudgetTable {
         Document document = new Document();
         try {
             String path = Paths.get("").toAbsolutePath().toString();
-            String downloadFolderPath = path + "/src/main/resources/downloads/";
+            String downloadFolderPath = path + "/src/main/resources/downloads/Budgets/";
 
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
-                    "Budget "+budget.getBudgetId()+".pdf"));
+                    "Budget " + budget.getBudgetId() + ".pdf"));
             document.open();
 
             Paragraph p = new Paragraph();
-            p.add("Customer Name: "+ budget.getCustomer().getName());
+            p.add("Customer Name: " + budget.getCustomer().getName());
             p.setAlignment(Element.ALIGN_CENTER);
 
             document.add(p);

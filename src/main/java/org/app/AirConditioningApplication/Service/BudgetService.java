@@ -6,6 +6,7 @@ import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
 import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,15 @@ import java.util.Optional;
 public class BudgetService {
     private final BudgetRepo budgetRepo;
     private final ProductRepo productRepo;
+    private final OrderService orderService;
 
 
-    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo) {
+    @Autowired
+    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo, OrderService orderService) {
         this.budgetRepo = budgetRepo;
 
         this.productRepo = productRepo;
+        this.orderService = orderService;
     }
 
     public ApiResponse save(Budget budget) {
@@ -41,6 +45,33 @@ public class BudgetService {
 
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
+
+    public ApiResponse update(Budget budget) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            for (Product product : budget.getProductList()
+            ) {
+                budget.setTotalPrice(product.getPrice() + budget.getTotalPrice());
+            }
+            budgetRepo.save(budget);
+
+            if (budget.getBudgetStatus().equalsIgnoreCase("accepted")) {
+                orderService.budgetToOrder(budget.getBudgetId());
+            }
+
+            apiResponse.setMessage("Budget Successfully updated in the database");
+            apiResponse.setData(budget);
+            apiResponse.setStatus(HttpStatus.OK.value());
+
+            return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -63,6 +94,7 @@ public class BudgetService {
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -86,6 +118,7 @@ public class BudgetService {
             return apiResponse;
 
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -113,6 +146,7 @@ public class BudgetService {
             return apiResponse;
 
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;

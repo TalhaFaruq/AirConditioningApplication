@@ -22,7 +22,7 @@ public class PdfSupplierPurchase {
         Document document = new Document();
         try {
             String path = Paths.get("").toAbsolutePath().toString();
-            String downloadFolderPath = path + "/src/main/resources/downloads/";
+            String downloadFolderPath = path + "/src/main/resources/downloads/SupplierOrders/";
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
                     supplierPurchasedHistory.getSupplierOrderId() + ".pdf"));
             document.open();

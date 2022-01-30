@@ -36,6 +36,7 @@ public class EmployeeService {
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -62,6 +63,7 @@ public class EmployeeService {
 
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -87,6 +89,7 @@ public class EmployeeService {
             return apiResponse;
 
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -104,7 +107,7 @@ public class EmployeeService {
                 employeeRepo.delete(employee.get());
 
                 apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successfully Deleted");
+                apiResponse.setMessage("Successfully Deleted the employee");
 
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -114,6 +117,7 @@ public class EmployeeService {
             return apiResponse;
 
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -140,13 +144,14 @@ public class EmployeeService {
                 apiResponse.setMessage("Work log added");
                 apiResponse.setData(emp.get().getWorkLogList());
 
-                return apiResponse;
             } else {
+                apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no employee against this ID");
-                return apiResponse;
             }
+            return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -176,11 +181,12 @@ public class EmployeeService {
 
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no user against this id");
+                apiResponse.setMessage("There is no employee against this id");
                 apiResponse.setData(null);
                 return apiResponse;
             }
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
