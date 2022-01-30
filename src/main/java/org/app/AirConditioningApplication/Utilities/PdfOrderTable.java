@@ -23,7 +23,7 @@ public class PdfOrderTable {
         try {
 //            String path = Paths.get("").toAbsolutePath().toString();
 //            String downloadFolderPath = path + "/src/main/resources/downloads/CustomerOrders/";
-            String downloadFolderPath = "C:\\";
+            String downloadFolderPath = "C://";
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
                     order.getOrderId()+".pdf"));
             document.open();
