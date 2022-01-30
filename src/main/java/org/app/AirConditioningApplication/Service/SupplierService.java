@@ -72,32 +72,46 @@ public class SupplierService {
 
     public ApiResponse buyProductsFromSupplier(Long supplierProductId, Integer quantityToBuy) {
         ApiResponse apiResponse = new ApiResponse();
-        Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
-        if (supplierProduct.isPresent()) {
-            Optional<Product> optionalProduct = productRepo.findByName(supplierProduct.get().getName());
-            optionalProduct.get().setQuantityInStock(optionalProduct.get().getQuantityInStock() + quantityToBuy);
-            productRepo.save(optionalProduct.get());
-            apiResponse.setMessage("Successfully updated the stock in products");
-        } else {
-            Product product = new Product();
-            product.setName(supplierProduct.get().getName());
-            product.setQuantityInStock(quantityToBuy);
-            product.setTax(supplierProduct.get().getTax());
+        try {
+            Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
+            if (supplierProduct.isPresent()) {
+                Optional<Product> optionalProduct = productRepo.findByName(supplierProduct.get().getName());
+                if (optionalProduct.isPresent()) {
+                    optionalProduct.get().setQuantityInStock(optionalProduct.get().getQuantityInStock() + quantityToBuy);
+                    productRepo.save(optionalProduct.get());
+                    apiResponse.setMessage("Successfully updated the stock in products");
+                } else {
+                    Product product = new Product();
+                    product.setName(supplierProduct.get().getName());
+                    product.setQuantityInStock(quantityToBuy);
+                    product.setTax(supplierProduct.get().getTax());
 
-            product.setPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
-            product.setCharacteristics(supplierProduct.get().getCharacteristics());
-            productRepo.save(product);
+                    product.setPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
+                    product.setCharacteristics(supplierProduct.get().getCharacteristics());
+                    productRepo.save(product);
+                    apiResponse.setMessage("Successfully purchased the new product from supplier");
+                }
+                SupplierPurchasedHistory supplierPurchasedHistory = new SupplierPurchasedHistory();
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setData(supplierProduct);
 
-            apiResponse.setMessage("Successfully purchased the product from supplier");
+                supplierPurchasedHistory.getSupplierProducts().add(supplierProduct.get());
+                supplierPurchasedHistory.setTotalPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
+                supplierPurchasedHistoryService.save(supplierPurchasedHistory);
+
+            }else {
+                apiResponse.setMessage("There is no supplier Product against this ID in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            }
+
+            return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
-        SupplierPurchasedHistory supplierPurchasedHistory = new SupplierPurchasedHistory();
-        apiResponse.setStatus(HttpStatus.OK.value());
-        apiResponse.setData(supplierProduct);
-
-        supplierPurchasedHistory.getSupplierProducts().add(supplierProduct.get());
-        supplierPurchasedHistory.setTotalPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
-        supplierPurchasedHistoryService.save(supplierPurchasedHistory);
-        return apiResponse;
     }
 
 
