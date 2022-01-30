@@ -69,9 +69,9 @@ public class SupplierPurchasedHistoryService {
 
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
+                apiResponse.setMessage("There is no purchased history against this ID");
+                apiResponse.setData(null);
             }
-            apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setMessage(e.getMessage());
@@ -94,7 +94,7 @@ public class SupplierPurchasedHistoryService {
                 apiResponse.setMessage("Successful");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
+                apiResponse.setMessage("There is no purchased history against this ID");
             }
             return apiResponse;
         } catch (Exception e) {
@@ -114,10 +114,10 @@ public class SupplierPurchasedHistoryService {
                 pdfSupplierPurchase.pdfdownload();
                 apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successful");
+                apiResponse.setMessage("Successfully downloaded the pdf");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
+                apiResponse.setMessage("There is no purchased history against this ID");
             }
 
             return apiResponse;
