@@ -29,21 +29,12 @@ public class BudgetService {
         try {
             //As the budget is Quotation, order is final receipt
             budget.setBudgetStatus("Pending");
-            if (!budget.getProductList().isEmpty()) {
-                List<Product> products = budget.getProductList();
-                //this stream will get the sum of all the products
-                for (Product product : products) {
-                    Optional<Product> product1 = productRepo.findById(product.getProductId());
-                    budget.setTotalPrice(budget.getTotalPrice() + product1.get().getPrice());
-                }
-            }
+            budgetRepo.save(budget);
 
             apiResponse.setMessage("Budget Successfully added in the database");
             apiResponse.setData(budget);
             apiResponse.setStatus(HttpStatus.OK.value());
-            // This will create pdf of budget
 
-            budgetRepo.save(budget);
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setMessage(e.getMessage());
