@@ -25,7 +25,8 @@ public class PdfBudgetTable {
         try {
             String path = Paths.get("").toAbsolutePath().toString();
 //            String downloadFolderPath = path + "/src/main/resources/downloads/CustomerOrders/";
-            String downloadFolderPath = "C:/";
+            String home = System.getProperty("user.home");
+            String downloadFolderPath = home+"/Downloads/";
 
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
                     "Budget " + budget.getBudgetId() + ".pdf"));
