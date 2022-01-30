@@ -58,6 +58,7 @@ public class SupplierService {
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;

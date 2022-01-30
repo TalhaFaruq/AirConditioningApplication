@@ -29,6 +29,10 @@ public class BudgetService {
         try {
             //As the budget is Quotation, order is final receipt
             budget.setBudgetStatus("Pending");
+            for (Product product : budget.getProductList()
+            ) {
+                budget.setTotalPrice(product.getPrice() + budget.getTotalPrice());
+            }
             budgetRepo.save(budget);
 
             apiResponse.setMessage("Budget Successfully added in the database");

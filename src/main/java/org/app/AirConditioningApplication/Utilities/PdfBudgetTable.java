@@ -9,6 +9,7 @@ import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Model.Product;
 
 import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class PdfBudgetTable {
@@ -22,7 +23,10 @@ public class PdfBudgetTable {
     public void pdfdownload() {
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\" +
+            String path = Paths.get("").toAbsolutePath().toString();
+            String downloadFolderPath = path + "/src/main/resources/downloads/";
+
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
                     "Budget "+budget.getBudgetId()+".pdf"));
             document.open();
 
