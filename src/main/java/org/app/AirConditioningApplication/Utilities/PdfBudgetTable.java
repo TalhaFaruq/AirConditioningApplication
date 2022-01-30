@@ -23,7 +23,7 @@ public class PdfBudgetTable {
     public void pdfdownload() {
         Document document = new Document();
         try {
-            String path = Paths.get("").toAbsolutePath().toString();
+//            String path = Paths.get("").toAbsolutePath().toString();
 //            String downloadFolderPath = path + "/src/main/resources/downloads/CustomerOrders/";
             String home = System.getProperty("user.home");
             String downloadFolderPath = home+"/Downloads/";
