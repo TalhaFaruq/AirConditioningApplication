@@ -56,8 +56,8 @@ public class SupplierController {
 
     @PostMapping("/buyProductFromSupplier")
     @ResponseBody
-    public ApiResponse buyProductFromSupplier(@RequestBody Supplier supplier, @RequestParam(name = "quantity") Integer quantityToBuy) {
-        return supplierService.buyProductsFromSupplier(supplier, quantityToBuy);
+    public ApiResponse buyProductFromSupplier(@RequestParam(name = "supplierId") Long supplierId, @RequestParam(name = "quantity") Integer quantityToBuy) {
+        return supplierService.buyProductsFromSupplier(supplierId, quantityToBuy);
     }
 
     @PostMapping("/buyMultipleProductFromSupplier")

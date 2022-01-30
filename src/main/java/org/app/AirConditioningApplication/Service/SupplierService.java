@@ -20,13 +20,15 @@ public class SupplierService {
     private final SupplierRepo supplierRepo;
     private final ProductRepo productRepo;
     private final SupplierPurchasedHistoryRepository supplierPurchasedHistoryRepository;
+    private final SupplierPurchasedHistoryService supplierPurchasedHistoryService;
     private final SupplierProductRepo supplierProductRepo;
 
 
-    public SupplierService(SupplierRepo supplierRepo, ProductRepo productRepo, SupplierPurchasedHistoryRepository supplierPurchasedHistoryRepository, SupplierProductRepo supplierProductRepo) {
+    public SupplierService(SupplierRepo supplierRepo, ProductRepo productRepo, SupplierPurchasedHistoryRepository supplierPurchasedHistoryRepository, SupplierPurchasedHistoryService supplierPurchasedHistoryService, SupplierProductRepo supplierProductRepo) {
         this.supplierRepo = supplierRepo;
         this.productRepo = productRepo;
         this.supplierPurchasedHistoryRepository = supplierPurchasedHistoryRepository;
+        this.supplierPurchasedHistoryService = supplierPurchasedHistoryService;
         this.supplierProductRepo = supplierProductRepo;
     }
 
@@ -68,7 +70,38 @@ public class SupplierService {
         }
     }
 
-    public ApiResponse buyProductsFromSupplier(Supplier supplier, Integer quantityToBuy) {
+    public ApiResponse buyProductsFromSupplier(Long supplierProductId, Integer quantityToBuy) {
+        ApiResponse apiResponse = new ApiResponse();
+        Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
+        if (supplierProduct.isPresent()) {
+            Optional<Product> optionalProduct = productRepo.findByName(supplierProduct.get().getName());
+            optionalProduct.get().setQuantityInStock(optionalProduct.get().getQuantityInStock() + quantityToBuy);
+            productRepo.save(optionalProduct.get());
+            apiResponse.setMessage("Successfully updated the stock in products");
+        } else {
+            Product product = new Product();
+            product.setName(supplierProduct.get().getName());
+            product.setQuantityInStock(quantityToBuy);
+            product.setTax(supplierProduct.get().getTax());
+
+            product.setPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
+            product.setCharacteristics(supplierProduct.get().getCharacteristics());
+            productRepo.save(product);
+
+            apiResponse.setMessage("Successfully purchased the product from supplier");
+        }
+        SupplierPurchasedHistory supplierPurchasedHistory = new SupplierPurchasedHistory();
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setData(supplierProduct);
+
+        supplierPurchasedHistory.getSupplierProducts().add(supplierProduct.get());
+        supplierPurchasedHistory.setTotalPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
+        supplierPurchasedHistoryService.save(supplierPurchasedHistory);
+        return apiResponse;
+    }
+
+
+/*    public ApiResponse buyProductsFromSupplier(Supplier supplier, Integer quantityToBuy) {
         ApiResponse apiResponse = new ApiResponse();
 
         Optional<Product> optionalProduct = productRepo.findByName(supplier.getSupplierProducts().get(0).getName());
@@ -88,10 +121,11 @@ public class SupplierService {
 
             apiResponse.setMessage("Successfully purchased the product from supplier");
         }
+
         apiResponse.setStatus(HttpStatus.OK.value());
         apiResponse.setData(supplier);
         return apiResponse;
-    }
+    }*/
 
     public ApiResponse buyMultipleProductsFromSupplier(List<Supplier> supplierList) {
         ApiResponse apiResponse = new ApiResponse();
