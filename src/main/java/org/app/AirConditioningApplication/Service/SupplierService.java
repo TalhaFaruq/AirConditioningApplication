@@ -5,6 +5,7 @@ import org.app.AirConditioningApplication.Model.Supplier;
 import org.app.AirConditioningApplication.Model.SupplierProduct;
 import org.app.AirConditioningApplication.Model.SupplierPurchasedHistory;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
+import org.app.AirConditioningApplication.Repository.SupplierProductRepo;
 import org.app.AirConditioningApplication.Repository.SupplierPurchasedHistoryRepository;
 import org.app.AirConditioningApplication.Repository.SupplierRepo;
 import org.app.AirConditioningApplication.response.ApiResponse;
@@ -19,12 +20,14 @@ public class SupplierService {
     private final SupplierRepo supplierRepo;
     private final ProductRepo productRepo;
     private final SupplierPurchasedHistoryRepository supplierPurchasedHistoryRepository;
+    private final SupplierProductRepo supplierProductRepo;
 
 
-    public SupplierService(SupplierRepo supplierRepo, ProductRepo productRepo, SupplierPurchasedHistoryRepository supplierPurchasedHistoryRepository) {
+    public SupplierService(SupplierRepo supplierRepo, ProductRepo productRepo, SupplierPurchasedHistoryRepository supplierPurchasedHistoryRepository, SupplierProductRepo supplierProductRepo) {
         this.supplierRepo = supplierRepo;
         this.productRepo = productRepo;
         this.supplierPurchasedHistoryRepository = supplierPurchasedHistoryRepository;
+        this.supplierProductRepo = supplierProductRepo;
     }
 
     public ApiResponse showAll() {
@@ -64,7 +67,6 @@ public class SupplierService {
             return apiResponse;
         }
     }
-
 
     public ApiResponse buyProductsFromSupplier(Supplier supplier, Integer quantityToBuy) {
         ApiResponse apiResponse = new ApiResponse();
@@ -126,7 +128,6 @@ public class SupplierService {
         return apiResponse;
     }
 
-
     public ApiResponse getById(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
         try {
@@ -149,7 +150,6 @@ public class SupplierService {
         }
     }
 
-
     public ApiResponse delete(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
         try {
@@ -165,6 +165,71 @@ public class SupplierService {
             }
             apiResponse.setData(null);
             return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
+
+    public ApiResponse addMultipleProductsInSupplier(Long supplierId, List<SupplierProduct> supplierProducts) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Optional<Supplier> supplier = supplierRepo.findById(supplierId);
+            if (supplier.isPresent()) {
+                for (SupplierProduct product : supplierProducts
+                ) {
+                    List<SupplierProduct> supplierExistingProduct = supplier.get().getSupplierProducts();
+                    if (supplierExistingProduct.isEmpty()) {
+
+                    } else {
+                        for (SupplierProduct existingProducts : supplierExistingProduct
+                        ) {
+                            if (existingProducts.getCharacteristics().equalsIgnoreCase(product.getCharacteristics()) && existingProducts.getName().equalsIgnoreCase(product.getName())) {
+                                continue;
+                            } else {
+                                supplier.get().getSupplierProducts().add(product);
+                            }
+                        }
+                    }
+                }
+                supplierRepo.save(supplier.get());
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully added new products in the supplier");
+                apiResponse.setData(supplier);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no supplier in the database");
+            }
+            return apiResponse;
+
+        } catch (Exception e) {
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
+
+    public ApiResponse addSingleProductInSupplier(Long supplierId, SupplierProduct supplierProduct) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Optional<Supplier> supplier = supplierRepo.findById(supplierId);
+            if (supplier.isPresent()) {
+                supplier.get().getSupplierProducts().add(supplierProduct);
+                supplierRepo.save(supplier.get());
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully added new product in the supplier");
+                apiResponse.setData(supplier);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no supplier in the database");
+            }
+            return apiResponse;
+
         } catch (Exception e) {
             apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
