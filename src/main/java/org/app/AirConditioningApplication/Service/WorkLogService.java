@@ -64,7 +64,6 @@ public class WorkLogService {
 
     public ApiResponse getById(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
-
         try {
             Optional<WorkLog> workLog = workLogRepo.findById(Id);
             if (workLog.isPresent()) {

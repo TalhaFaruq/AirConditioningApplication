@@ -131,12 +131,11 @@ public class OrderService {
             for (Product product : productList
             ) {
                 order.getProductList().add(product);
-
             }
 
             order.setTotalPrice(budget.get().getTotalPrice());
             order.setOrderName(budget.get().getBudgetName());
-            order.setEmpPrice(20);
+            order.setEmpPrice(budget.get().getOfficerHours() * 20 + budget.get().getAssistantHours() * 15);
             orderRepo.save(order);
             budgetRepo.save(budget.get());
             apiResponse.setStatus(HttpStatus.OK.value());
