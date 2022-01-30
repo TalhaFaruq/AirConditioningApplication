@@ -143,7 +143,6 @@ public class EmployeeService {
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Work log added");
                 apiResponse.setData(emp.get().getWorkLogList());
-
             } else {
                 apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -181,7 +180,7 @@ public class EmployeeService {
 
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no employee against this id");
+                apiResponse.setMessage("There is no worklog against this id");
                 apiResponse.setData(null);
                 return apiResponse;
             }
