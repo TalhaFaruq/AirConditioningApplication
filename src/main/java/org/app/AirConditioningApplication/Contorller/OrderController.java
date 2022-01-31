@@ -3,6 +3,7 @@ package org.app.AirConditioningApplication.Contorller;
 import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Service.OrderService;
 import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -49,5 +50,10 @@ public class OrderController {
     @GetMapping("/printPdfOrder")
     public ApiResponse pdfDownloader(@RequestParam Long Id) {
         return orderService.printPdf(Id);
+    }
+
+    @GetMapping("/downloadFile")
+    public ResponseEntity<Object> downloadFile(@RequestParam(name = "orderId") Long orderId) {
+        return orderService.downloadFile(orderId);
     }
 }

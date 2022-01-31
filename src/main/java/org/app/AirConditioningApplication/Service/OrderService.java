@@ -8,9 +8,17 @@ import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
 import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +48,6 @@ public class OrderService {
         }
     }
 
-
     public ApiResponse showAll() {
         ApiResponse apiResponse = new ApiResponse();
         try {
@@ -63,7 +70,6 @@ public class OrderService {
         }
     }
 
-
     public ApiResponse getById(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
         try {
@@ -85,7 +91,6 @@ public class OrderService {
             return apiResponse;
         }
     }
-
 
     public ApiResponse delete(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
@@ -141,12 +146,40 @@ public class OrderService {
             apiResponse.setStatus(HttpStatus.OK.value());
             apiResponse.setMessage("Order Successfully created");
             apiResponse.setData(order);
+            printPdf(order.getOrderId());
         } else {
             apiResponse.setData(null);
             apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
             apiResponse.setMessage("There is no order against this ID");
         }
         return apiResponse;
+    }
+
+    public ResponseEntity<Object> downloadFile(Long orderId) {
+        try {
+            Optional<Order> order = orderRepo.findById(orderId);
+            if (order.isPresent()) {
+                String path = Paths.get("").toAbsolutePath().toString();
+                String downloadFolderPath = path + "/src/main/resources/downloads/CustomerOrders/";
+
+                String filename = downloadFolderPath + "Order " + order.get().getOrderId() + ".pdf";
+                File file = new File(filename);
+                InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getName()));
+                headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+                headers.add("Pragma", "no-cache");
+                headers.add("Expires", "0");
+                ResponseEntity<Object> result = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(MediaType.APPLICATION_PDF).body(resource);
+                return result;
+            } else {
+                return new ResponseEntity<>("There is no file against this id", HttpStatus.NOT_FOUND);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //Must be called after order is saved in database with worklog

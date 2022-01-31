@@ -26,12 +26,12 @@ public class PdfOrderTable {
             String path = Paths.get("").toAbsolutePath().toString();
             String downloadFolderPath = path + "/src/main/resources/downloads/CustomerOrders/";
 
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
-                    order.getOrderId()+".pdf"));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath + "Order " +
+                    order.getOrderId() + ".pdf"));
 
             document.open();
 
-            Header header = new Header("Invoice","Order");
+            Header header = new Header("Invoice", "Order");
 
 
             Paragraph p = new Paragraph();
@@ -46,13 +46,13 @@ public class PdfOrderTable {
             document.add(p);
             document.add(date);
 
-            PdfPTable orderTable = new PdfPTable(3); // 3 columns.
+            PdfPTable orderTable = new PdfPTable(4); // 3 columns.
             orderTable.setWidthPercentage(100); //Width 100%
             orderTable.setSpacingBefore(10f); //Space before orderTable
             orderTable.setSpacingAfter(10f); //Space after orderTable
 
             //Set Column widths
-            float[] columnWidths = {1f, 1f, 1f};
+            float[] columnWidths = {1f, 1f, 1f, 1f};
             orderTable.setWidths(columnWidths);
 
             PdfPCell cell1 = new PdfPCell(new Paragraph("Order ID"));
@@ -74,14 +74,22 @@ public class PdfOrderTable {
             cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
+            PdfPCell cell4 = new PdfPCell(new Paragraph("Order Name"));
+            cell4.setBorderColor(BaseColor.BLUE);
+            cell4.setPaddingLeft(10);
+            cell4.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
+
             //To avoid having the cell border and the content overlap, if you are having thick cell borders
             //cell1.setUserBorderPadding(true);
             //cell2.setUserBorderPadding(true);
             //cell3.setUserBorderPadding(true);
             orderTable.addCell(cell1);
+            orderTable.addCell(cell4);
             orderTable.addCell(cell2);
             orderTable.addCell(cell3);
             orderTable.addCell(order.getOrderId().toString());
+            orderTable.addCell(order.getOrderName());
             orderTable.addCell(String.valueOf(order.getEmpPrice()));
             orderTable.addCell(String.valueOf(order.getTotalPrice())); // The total price will be by quotation
 

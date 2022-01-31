@@ -98,8 +98,9 @@ public class SupplierService {
                 supplierPurchasedHistory.getSupplierProducts().add(supplierProduct.get());
                 supplierPurchasedHistory.setTotalPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
                 supplierPurchasedHistoryService.save(supplierPurchasedHistory);
+                supplierPurchasedHistoryService.pdfDownload(supplierPurchasedHistory.getSupplierOrderId());
 
-            }else {
+            } else {
                 apiResponse.setMessage("There is no supplier Product against this ID in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setData(null);
