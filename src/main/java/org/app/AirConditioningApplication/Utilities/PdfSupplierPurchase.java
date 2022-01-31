@@ -25,7 +25,7 @@ public class PdfSupplierPurchase {
             String downloadFolderPath = path + "/src/main/resources/downloads/SupplierOrders/";
 /*            String home = System.getProperty("user.home");
             String downloadFolderPath = home+"/Downloads/";*/
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath + "SupplierOrder " +
                     supplierPurchasedHistory.getSupplierOrderId() + ".pdf"));
             document.open();
 
@@ -90,7 +90,7 @@ public class PdfSupplierPurchase {
 
 
         //Set Column widths
-        float[] columnWidths = {1f, 1f, 1f, 1f, 1f ,1f};
+        float[] columnWidths = {1f, 1f, 1f, 1f, 1f, 1f};
         productTable.setWidths(columnWidths);
 
         PdfPCell cell1 = new PdfPCell(new Paragraph("Product ID"));
