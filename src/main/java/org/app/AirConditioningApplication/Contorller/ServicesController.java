@@ -7,6 +7,7 @@ import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/services")
 public class ServicesController {
     private final ServicesService servicesService;
 
