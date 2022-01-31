@@ -1,11 +1,10 @@
 package org.app.AirConditioningApplication.Contorller;
 
-import org.app.AirConditioningApplication.Model.Customer;
 import org.app.AirConditioningApplication.Model.Services;
 import org.app.AirConditioningApplication.Service.ServicesService;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/services")
 public class ServicesController {

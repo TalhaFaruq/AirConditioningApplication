@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @CrossOrigin
-
 @RestController
 @RequestMapping("Budget")
 @EnableSwagger2
