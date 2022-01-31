@@ -32,9 +32,7 @@ public class BudgetService {
         ApiResponse apiResponse = new ApiResponse();
         try {
             //As the budget is Quotation, order is final receipt
-            if (budget.getBudgetStatus().equalsIgnoreCase("")) {
                 budget.setBudgetStatus("Pending");
-            }
 
             for (Product product : budget.getProductList()
             ) {
