@@ -11,10 +11,8 @@ import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -28,14 +26,14 @@ public class OrderService {
 
     public ApiResponse save(Order order) {
         ApiResponse apiResponse = new ApiResponse();
-
         try {
             orderRepo.save(order);
-            apiResponse.setMessage("Successfully added in the database");
+            apiResponse.setMessage("Order successfully added in the database");
             apiResponse.setData(order);
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -52,12 +50,13 @@ public class OrderService {
                 apiResponse.setData(orderList);
                 apiResponse.setStatus(HttpStatus.OK.value());
             } else {
-                apiResponse.setMessage("There is no employee in the database");
+                apiResponse.setMessage("There is no order in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setData(null);
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -80,6 +79,7 @@ public class OrderService {
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -97,14 +97,15 @@ public class OrderService {
                 order.get().setProductList(null);
                 orderRepo.delete(order.get());
                 apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successfully Deleted");
+                apiResponse.setMessage("Successfully Deleted the order");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no employee against this ID");
+                apiResponse.setMessage("There is no order against this ID");
             }
             apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -118,41 +119,32 @@ public class OrderService {
         Optional<Budget> budget = budgetRepo.findById(id);
         if (budget.isPresent()) {
             Order order = new Order();
-            budget.get().setBudgetStatus("Completed");
+            budget.get().setBudgetStatus("Accepted");
 
-//            List<Order> orderList = orderRepo.findAll();
-            /*if (orderList.size() == 0) {
-                order.setOrderId(1L);
-            } else {
-                order.setOrderId((long) orderList.size() + 1);
-            }*/
             List<Services> serviceList = budget.get().getService();
-            for (Services service1: serviceList
-                 ) {
+            for (Services service1 : serviceList
+            ) {
                 order.getService().add(service1);
             }
-//            order.setService((budget.get().getService()));
             order.setCustomer(budget.get().getCustomer());
             List<Product> productList = budget.get().getProductList();
             for (Product product : productList
             ) {
                 order.getProductList().add(product);
-
             }
-//            Iterator it = budget.get().getProductList().iterator();
-//            while (it.hasNext())
-//                order.setProductList(order.getProductList().add(budget.get().getProductList().get()));
-//            order.setProductList(budget.get().getProductList().stream().collect(Collectors.toList()));
-            order.setTotalPrice(budget.get().getTotalPrice());
 
+            order.setTotalPrice(budget.get().getTotalPrice());
+            order.setOrderName(budget.get().getBudgetName());
+            order.setEmpPrice(budget.get().getOfficerHours() * 20 + budget.get().getAssistantHours() * 15);
             orderRepo.save(order);
             budgetRepo.save(budget.get());
             apiResponse.setStatus(HttpStatus.OK.value());
-            apiResponse.setMessage("Successfully Order created");
+            apiResponse.setMessage("Order Successfully created");
             apiResponse.setData(order);
         } else {
+            apiResponse.setData(null);
             apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            apiResponse.setMessage("There is no budget against this ID");
+            apiResponse.setMessage("There is no order against this ID");
         }
         return apiResponse;
     }

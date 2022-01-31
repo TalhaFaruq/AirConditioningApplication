@@ -8,6 +8,7 @@ import org.app.AirConditioningApplication.Model.SupplierProduct;
 import org.app.AirConditioningApplication.Model.SupplierPurchasedHistory;
 
 import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class PdfSupplierPurchase {
@@ -20,7 +21,11 @@ public class PdfSupplierPurchase {
     public void pdfdownload() {
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\SupplierPurchasedHistory " +
+            String path = Paths.get("").toAbsolutePath().toString();
+            String downloadFolderPath = path + "/src/main/resources/downloads/SupplierOrders/";
+/*            String home = System.getProperty("user.home");
+            String downloadFolderPath = home+"/Downloads/";*/
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
                     supplierPurchasedHistory.getSupplierOrderId() + ".pdf"));
             document.open();
 

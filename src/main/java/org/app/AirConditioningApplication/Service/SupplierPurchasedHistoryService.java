@@ -28,20 +28,21 @@ public class SupplierPurchasedHistoryService {
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
         }
     }
 
-
     public ApiResponse showAll() {
         ApiResponse apiResponse = new ApiResponse();
         List<SupplierPurchasedHistory> supplierPurchasedHistories = supplierPurchasedHistoryRepository.findAll();
         try {
             if (supplierPurchasedHistories.isEmpty()) {
-                apiResponse.setMessage("There is no Purchased in the database");
+                apiResponse.setMessage("There is no purchased history in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
 
             } else {
                 apiResponse.setMessage("Successful");
@@ -51,6 +52,7 @@ public class SupplierPurchasedHistoryService {
 
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -69,11 +71,12 @@ public class SupplierPurchasedHistoryService {
 
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
+                apiResponse.setMessage("There is no purchased history against this ID");
+                apiResponse.setData(null);
             }
-            apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -89,15 +92,16 @@ public class SupplierPurchasedHistoryService {
             if (supplierPurchasedHistory.isPresent()) {
                 supplierPurchasedHistory.get().setSupplierProducts(null);
                 supplierPurchasedHistoryRepository.delete(supplierPurchasedHistory.get());
-                apiResponse.setData(supplierPurchasedHistory);
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successful");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
+                apiResponse.setMessage("There is no purchased history against this ID");
             }
+            apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -112,16 +116,18 @@ public class SupplierPurchasedHistoryService {
                 PdfSupplierPurchase pdfSupplierPurchase = new PdfSupplierPurchase(supplierPurchasedHistory.get());
 
                 pdfSupplierPurchase.pdfdownload();
-                apiResponse.setData(null);
+                apiResponse.setData(supplierPurchasedHistory);
                 apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successful");
+                apiResponse.setMessage("Successfully downloaded the pdf");
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no supplierPurchasedHistory against this ID");
+                apiResponse.setMessage("There is no purchased history against this ID");
+                apiResponse.setData(null);
             }
 
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;

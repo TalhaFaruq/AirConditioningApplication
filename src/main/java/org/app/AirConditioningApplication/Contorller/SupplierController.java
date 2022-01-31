@@ -1,6 +1,7 @@
 package org.app.AirConditioningApplication.Contorller;
 
 import org.app.AirConditioningApplication.Model.Supplier;
+import org.app.AirConditioningApplication.Model.SupplierProduct;
 import org.app.AirConditioningApplication.Service.SupplierService;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +43,21 @@ public class SupplierController {
         return supplierService.getById(Id);
     }
 
+    @PostMapping("/addProductsInSupplier")
+    public ApiResponse addMultipleProductsInSupplier(@RequestParam(name = "supplierId") Long supplierId, @RequestBody List<SupplierProduct> supplierProducts) {
+        return supplierService.addMultipleProductsInSupplier(supplierId, supplierProducts);
+    }
+
+    @PostMapping("/addSingleProductInSupplier")
+    public ApiResponse addSingleProductInSupplier(@RequestParam(name = "supplierId") Long supplierId, @RequestBody SupplierProduct supplierProduct) {
+        return supplierService.addSingleProductInSupplier(supplierId, supplierProduct);
+    }
+
+
     @PostMapping("/buyProductFromSupplier")
     @ResponseBody
-    public ApiResponse buyProductFromSupplier(@RequestBody Supplier supplier, @RequestParam(name = "quantity") Integer quantityToBuy) {
-        return supplierService.buyProductsFromSupplier(supplier, quantityToBuy);
+    public ApiResponse buyProductFromSupplier(@RequestParam(name = "product") Long supplierProductId, @RequestParam(name = "quantity") Integer quantityToBuy) {
+        return supplierService.buyProductsFromSupplier(supplierProductId, quantityToBuy);
     }
 
     @PostMapping("/buyMultipleProductFromSupplier")

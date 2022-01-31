@@ -50,6 +50,4 @@ public class OrderController {
     public ApiResponse pdfDownloader(@RequestParam Long Id) {
         return orderService.printPdf(Id);
     }
-
-
 }

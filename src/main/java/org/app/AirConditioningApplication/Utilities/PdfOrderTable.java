@@ -8,6 +8,7 @@ import org.app.AirConditioningApplication.Model.Order;
 import org.app.AirConditioningApplication.Model.Product;
 
 import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class PdfOrderTable {
@@ -20,7 +21,11 @@ public class PdfOrderTable {
     public void pdfdownload() {
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Huawei\\Downloads\\Order " +
+            String path = Paths.get("").toAbsolutePath().toString();
+            String downloadFolderPath = path + "/src/main/resources/downloads/CustomerOrders/";
+            /*String home = System.getProperty("user.home");
+            String downloadFolderPath = home+"/Downloads/";*/
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(downloadFolderPath +
                     order.getOrderId()+".pdf"));
             document.open();
 
