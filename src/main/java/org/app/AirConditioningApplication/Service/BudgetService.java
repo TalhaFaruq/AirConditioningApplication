@@ -37,6 +37,8 @@ public class BudgetService {
 
     public ApiResponse save(Budget budget) {
         ApiResponse apiResponse = new ApiResponse();
+
+        budget.setBudgetId(null);
         try {
             //As the budget is Quotation, order is final receipt
             budget.setBudgetStatus("Pending");
