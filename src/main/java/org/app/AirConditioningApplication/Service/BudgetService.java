@@ -6,9 +6,18 @@ import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
 import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,12 +25,14 @@ import java.util.Optional;
 public class BudgetService {
     private final BudgetRepo budgetRepo;
     private final ProductRepo productRepo;
+    private final OrderService orderService;
 
-
-    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo) {
+    @Autowired
+    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo, OrderService orderService) {
         this.budgetRepo = budgetRepo;
 
         this.productRepo = productRepo;
+        this.orderService = orderService;
     }
 
     public ApiResponse save(Budget budget) {
@@ -29,29 +40,52 @@ public class BudgetService {
         try {
             //As the budget is Quotation, order is final receipt
             budget.setBudgetStatus("Pending");
-            if (!budget.getProductList().isEmpty()) {
-                List<Product> products = budget.getProductList();
-                //this stream will get the sum of all the products
-                for (Product product : products) {
-                    Optional<Product> product1 = productRepo.findById(product.getProductId());
-                    budget.setTotalPrice(budget.getTotalPrice() + product1.get().getPrice());
-                }
+
+            for (Product product : budget.getProductList()
+            ) {
+                budget.setTotalPrice(product.getPrice() + budget.getTotalPrice());
             }
+            budget.setTotalPrice(budget.getTotalPrice() + budget.getOfficerHours() * 20 + budget.getAssistantHours() * 15);
+            budgetRepo.save(budget);
 
             apiResponse.setMessage("Budget Successfully added in the database");
             apiResponse.setData(budget);
             apiResponse.setStatus(HttpStatus.OK.value());
-            // This will create pdf of budget
-
-            budgetRepo.save(budget);
+            pdfCall(budget.getBudgetId());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
         }
     }
 
+    public ApiResponse update(Budget budget) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            for (Product product : budget.getProductList()
+            ) {
+                budget.setTotalPrice(product.getPrice() + budget.getTotalPrice());
+            }
+            budgetRepo.save(budget);
+
+            if (budget.getBudgetStatus().equalsIgnoreCase("accepted")) {
+                orderService.budgetToOrder(budget.getBudgetId());
+            }
+
+            apiResponse.setMessage("Budget Successfully updated in the database");
+            apiResponse.setData(budget);
+            apiResponse.setStatus(HttpStatus.OK.value());
+
+            return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
 
     public ApiResponse showAll() {
         ApiResponse apiResponse = new ApiResponse();
@@ -68,12 +102,12 @@ public class BudgetService {
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
         }
     }
-
 
     public ApiResponse getById(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
@@ -91,12 +125,12 @@ public class BudgetService {
             return apiResponse;
 
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
         }
     }
-
 
     public ApiResponse delete(Long Id) {
         ApiResponse apiResponse = new ApiResponse();
@@ -118,9 +152,37 @@ public class BudgetService {
             return apiResponse;
 
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
+        }
+    }
+
+    public ResponseEntity<Object> downloadFile(Long budgetId) {
+        try {
+            Optional<Budget> budget = budgetRepo.findById(budgetId);
+            if (budget.isPresent()) {
+                String path = Paths.get("").toAbsolutePath().toString();
+                String downloadFolderPath = path + "/src/main/resources/downloads/Budgets/";
+
+                String filename = downloadFolderPath + "Budget " + budget.get().getBudgetId() + ".pdf";
+                File file = new File(filename);
+                InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getName()));
+                headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+                headers.add("Pragma", "no-cache");
+                headers.add("Expires", "0");
+                ResponseEntity<Object> result = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(MediaType.APPLICATION_PDF).body(resource);
+                return result;
+            } else {
+                return new ResponseEntity<>("There is no file against this id", HttpStatus.NOT_FOUND);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

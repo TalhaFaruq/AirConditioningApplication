@@ -7,6 +7,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import com.google.firebase.cloud.FirestoreClient;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +32,6 @@ public class FirebaseAdminService {
             if(FirebaseApp.getApps().isEmpty()) { //<--- check with this line
                 app = FirebaseApp.initializeApp(options);
             }
-//        FirebaseApp app = FirebaseApp.initializeApp( options);
-//        System.out.println("App Name = " + app.getName());
             FirebaseAuth auth = FirebaseAuth.getInstance();
             UserRecord.CreateRequest request = new UserRecord.CreateRequest();
             email = email.trim();

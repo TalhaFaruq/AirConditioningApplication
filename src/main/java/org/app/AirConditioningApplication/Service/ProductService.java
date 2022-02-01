@@ -21,11 +21,12 @@ public class ProductService {
         ApiResponse apiResponse = new ApiResponse();
         try {
             productRepo.save(product);
-            apiResponse.setMessage("Successfully added in the database");
+            apiResponse.setMessage("Successfully added product in the database");
             apiResponse.setData(product);
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -42,12 +43,13 @@ public class ProductService {
                 apiResponse.setData(productList);
                 apiResponse.setStatus(HttpStatus.OK.value());
             } else {
-                apiResponse.setMessage("There is no employee in the database");
+                apiResponse.setMessage("There is no product in the database");
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setData(null);
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -70,6 +72,7 @@ public class ProductService {
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -92,6 +95,7 @@ public class ProductService {
             apiResponse.setData(null);
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;
@@ -117,6 +121,7 @@ public class ProductService {
             }
             return apiResponse;
         } catch (Exception e) {
+            apiResponse.setData(null);
             apiResponse.setMessage(e.getMessage());
             apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return apiResponse;

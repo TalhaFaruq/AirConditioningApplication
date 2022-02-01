@@ -3,6 +3,7 @@ package org.app.AirConditioningApplication.Contorller;
 import org.app.AirConditioningApplication.Model.SupplierPurchasedHistory;
 import org.app.AirConditioningApplication.Service.SupplierPurchasedHistoryService;
 import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -42,8 +43,13 @@ public class SupplierPurchasedHistoryController {
     }
 
     @GetMapping("/downloadPdf")
-    public ApiResponse downloadSupplierPurchasedHistory(@RequestParam String id){
+    public ApiResponse downloadSupplierPurchasedHistory(@RequestParam String id) {
         return supplierPurchasedHistoryService.pdfDownload(id);
+    }
+
+    @GetMapping("/downloadFile")
+    public ResponseEntity<Object> downloadFile(@RequestParam(name = "supplierBudgetId") String supplierBudgetId) {
+        return supplierPurchasedHistoryService.downloadFile(supplierBudgetId);
     }
 
 }
