@@ -1,11 +1,9 @@
 package org.app.AirConditioningApplication.Service;
 
-import org.app.AirConditioningApplication.Model.Budget;
-import org.app.AirConditioningApplication.Model.Order;
-import org.app.AirConditioningApplication.Model.Product;
-import org.app.AirConditioningApplication.Model.Services;
+import org.app.AirConditioningApplication.Model.*;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
+import org.app.AirConditioningApplication.Repository.WorkLogRepo;
 import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.core.io.InputStreamResource;
@@ -26,10 +24,12 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepo orderRepo;
     private final BudgetRepo budgetRepo;
+    private final WorkLogRepo workLogRepo;
 
-    public OrderService(OrderRepo orderRepo, BudgetRepo budgetRepo) {
+    public OrderService(OrderRepo orderRepo, BudgetRepo budgetRepo, WorkLogRepo workLogRepo) {
         this.orderRepo = orderRepo;
         this.budgetRepo = budgetRepo;
+        this.workLogRepo = workLogRepo;
     }
 
     public ApiResponse save(Order order) {
@@ -100,6 +100,12 @@ public class OrderService {
                 order.get().setService(null);
                 order.get().setCustomer(null);
                 order.get().setProductList(null);
+                Optional<WorkLog> workLog = workLogRepo.findWorkLogByOrder_OrderId(order.get().getOrderId());
+                if (workLog.isPresent()) {
+                    workLog.get().setOrder(null);
+                    workLogRepo.save(workLog.get());
+                }
+                orderRepo.save(order.get());
                 orderRepo.delete(order.get());
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successfully Deleted the order");
