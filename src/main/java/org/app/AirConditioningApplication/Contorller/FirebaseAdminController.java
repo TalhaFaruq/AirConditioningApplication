@@ -17,7 +17,19 @@ public class FirebaseAdminController {
 
     @GetMapping("/createEmployee")
     @ResponseBody
-    public ApiResponse createFirebaseEmployee(@RequestParam String email, @RequestParam String password) throws IOException, FirebaseAuthException {
+    public ApiResponse createFirebaseEmployee(@RequestParam String email, @RequestParam String password){
         return firebaseAdminService.createFirebaseEmployee(email, password);
+    }
+
+    @DeleteMapping("/deleteEmployee")
+    @ResponseBody
+    public ApiResponse deleteFirebaseEmployee(@RequestParam String uid){
+        return firebaseAdminService.deleteFirebaseEmployee(uid);
+    }
+
+    @GetMapping("/getUserUid")
+    @ResponseBody
+    public ApiResponse getUserUid(@RequestParam String email){
+        return firebaseAdminService.getUserUid(email);
     }
 }
