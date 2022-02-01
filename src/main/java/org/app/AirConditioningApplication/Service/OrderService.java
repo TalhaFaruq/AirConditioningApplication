@@ -100,10 +100,17 @@ public class OrderService {
                 order.get().setService(null);
                 order.get().setCustomer(null);
                 order.get().setProductList(null);
-                Optional<WorkLog> workLog = workLogRepo.findWorkLogByOrder_OrderId(order.get().getOrderId());
-                if (workLog.isPresent()) {
+                List<WorkLog> workLogList = workLogRepo.findAllByOrder_OrderId(order.get().getOrderId());
+                /*if (workLog.isPresent()) {
                     workLog.get().setOrder(null);
                     workLogRepo.save(workLog.get());
+                }*/
+                if (!workLogList.isEmpty()) {
+                    for (WorkLog work : workLogList
+                    ) {
+                        work.setOrder(null);
+                        workLogRepo.save(work);
+                    }
                 }
                 orderRepo.save(order.get());
                 orderRepo.delete(order.get());
