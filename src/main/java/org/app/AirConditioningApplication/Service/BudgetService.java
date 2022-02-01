@@ -51,7 +51,9 @@ public class BudgetService {
             apiResponse.setMessage("Budget Successfully added in the database");
             apiResponse.setData(budget);
             apiResponse.setStatus(HttpStatus.OK.value());
-            pdfCall(budget.getBudgetId());
+            PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budget);
+            pdfBudgetTable.pdfdownload();
+//            pdfCall(budget.getBudgetId());
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setData(null);

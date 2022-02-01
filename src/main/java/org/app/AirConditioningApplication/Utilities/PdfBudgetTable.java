@@ -34,7 +34,7 @@ public class PdfBudgetTable {
                     "Budget " + budget.getBudgetId() + ".pdf"));
             document.open();
 
-            Header header = new Header("Invoice","Budget");
+            Header header = new Header("Invoice", "Budget");
 
 
             Paragraph p = new Paragraph();
@@ -72,7 +72,6 @@ public class PdfBudgetTable {
             cell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
 
-
             PdfPCell cell2 = new PdfPCell(new Paragraph("Status"));
             cell2.setBorderColor(BaseColor.BLUE);
             cell2.setPaddingLeft(10);
@@ -100,9 +99,7 @@ public class PdfBudgetTable {
             budgetTable.addCell(budget.getBudgetStatus());
             budgetTable.addCell(String.valueOf(budget.getTotalPrice()));
 
-
             document.add(budgetTable);
-
 
             List<Product> productList = budget.getProductList();
             if (!productList.isEmpty()) {
@@ -130,12 +127,11 @@ public class PdfBudgetTable {
 
             document.close();
             writer.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 
     public PdfPTable products(List<Product> productList) throws DocumentException {
         PdfPTable productTable = new PdfPTable(3); // 3 columns.
@@ -177,7 +173,6 @@ public class PdfBudgetTable {
         }
         return productTable;
     }
-
 
     public PdfPTable services(List<Services> servicesList) throws DocumentException {
 
