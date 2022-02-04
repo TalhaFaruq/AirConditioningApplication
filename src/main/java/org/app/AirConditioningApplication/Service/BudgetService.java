@@ -1,8 +1,10 @@
 package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.Budget;
+import org.app.AirConditioningApplication.Model.Customer;
 import org.app.AirConditioningApplication.Model.Product;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
+import org.app.AirConditioningApplication.Repository.CustomerRepo;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
 import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
@@ -25,21 +27,34 @@ import java.util.Optional;
 public class BudgetService {
     private final BudgetRepo budgetRepo;
     private final ProductRepo productRepo;
+    private final CustomerRepo customerRepo;
     private final OrderService orderService;
 
     @Autowired
-    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo, OrderService orderService) {
+    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo, CustomerRepo customerRepo, OrderService orderService) {
         this.budgetRepo = budgetRepo;
 
         this.productRepo = productRepo;
+        this.customerRepo = customerRepo;
         this.orderService = orderService;
     }
 
     public ApiResponse save(Budget budget) {
         ApiResponse apiResponse = new ApiResponse();
 
-        budget.setBudgetId(null);
+
         try {
+            budget.setBudgetId(null);
+
+            Optional<Customer> customer = customerRepo.findById(budget.getCustomer().getCustomerId());
+            if (!customer.isPresent()) {
+//                budget.getCustomer().setCustomerId(null);
+                Customer customer1 = new Customer();
+                customer1.setName(budget.getCustomer().getName());
+                customerRepo.save(customer1);
+                budget.setCustomer(customer1);
+            }
+
             //As the budget is Quotation, order is final receipt
             budget.setBudgetStatus("Pending");
 
@@ -68,6 +83,7 @@ public class BudgetService {
     public ApiResponse update(Budget budget) {
         ApiResponse apiResponse = new ApiResponse();
         try {
+
             for (Product product : budget.getProductList()
             ) {
                 budget.setTotalPrice(product.getPrice() + budget.getTotalPrice());
