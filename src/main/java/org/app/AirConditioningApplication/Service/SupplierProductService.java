@@ -93,18 +93,25 @@ public class SupplierProductService {
             Optional<Supplier> supplier = supplierRepo.findById(supplierId);
             if (supplier.isPresent()) {
                 List<SupplierProduct> products = supplier.get().getSupplierProducts();
-                for (SupplierProduct suppProduct : products
-                ) {
-                    if (suppProduct.getProductId() == supplierProductId) {
-                        products.remove(suppProduct);
-                        supplierRepo.save(supplier.get());
+
+                for (int i = 0; i < products.size(); i++) {
+                    if (products.get(i).getProductId().longValue() == supplierProductId.longValue()) {
+                        products.remove(products.get(i));
                     }
                 }
-            }else {
+                /*for (SupplierProduct suppProduct : products
+                ) {
+                    if ((supplierProductId.longValue() == suppProduct.getProductId().longValue())) {
+                        products.remove(suppProduct);
+                    }
+                }*/
+                supplier.get().setSupplierProducts(products);
+                supplierRepo.save(supplier.get());
+            } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no Supplier against this ID");
             }
-            Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
+            /*Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
             if (supplierProduct.isPresent()) {
                 supplierProductRepo.delete(supplierProduct.get());
                 apiResponse.setStatus(HttpStatus.OK.value());
@@ -112,8 +119,8 @@ public class SupplierProductService {
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no SupplierProduct against this ID");
-            }
-            apiResponse.setData(null);
+            }*/
+            apiResponse.setData(supplier.get());
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setData(null);
