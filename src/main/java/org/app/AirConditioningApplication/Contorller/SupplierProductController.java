@@ -5,6 +5,9 @@ import org.app.AirConditioningApplication.Service.SupplierProductService;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
+@RestController
+@RequestMapping("SupplierProduct")
 public class SupplierProductController {
     private final SupplierProductService supplierProductService;
 
