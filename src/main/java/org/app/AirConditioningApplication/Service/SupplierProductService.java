@@ -1,13 +1,12 @@
-
 package org.app.AirConditioningApplication.Service;
 
 
-import org.app.AirConditioningApplication.Model.Services;
+import org.app.AirConditioningApplication.Model.Supplier;
 import org.app.AirConditioningApplication.Model.SupplierProduct;
 import org.app.AirConditioningApplication.Repository.SupplierProductRepo;
+import org.app.AirConditioningApplication.Repository.SupplierRepo;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +15,11 @@ import java.util.Optional;
 @Service
 public class SupplierProductService {
     private final SupplierProductRepo supplierProductRepo;
+    private final SupplierRepo supplierRepo;
 
-    public SupplierProductService(SupplierProductRepo supplierProductRepo) {
+    public SupplierProductService(SupplierProductRepo supplierProductRepo, SupplierRepo supplierRepo) {
         this.supplierProductRepo = supplierProductRepo;
+        this.supplierRepo = supplierRepo;
     }
 
 
@@ -85,6 +86,42 @@ public class SupplierProductService {
         }
     }
 
+
+    public ApiResponse deleteById(Long supplierProductId, Long supplierId) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Optional<Supplier> supplier = supplierRepo.findById(supplierId);
+            if (supplier.isPresent()) {
+                List<SupplierProduct> products = supplier.get().getSupplierProducts();
+                for (SupplierProduct suppProduct : products
+                ) {
+                    if (suppProduct.getProductId() == supplierProductId) {
+                        products.remove(suppProduct);
+                        supplierRepo.save(supplier.get());
+                    }
+                }
+            }else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no Supplier against this ID");
+            }
+            Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
+            if (supplierProduct.isPresent()) {
+                supplierProductRepo.delete(supplierProduct.get());
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted the SupplierProduct");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no SupplierProduct against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
 
     public ApiResponse delete(Long Id) {
         ApiResponse apiResponse = new ApiResponse();

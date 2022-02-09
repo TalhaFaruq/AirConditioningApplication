@@ -30,9 +30,15 @@ public class SupplierProductController {
         return supplierProductService.save(supplierProduct);
     }
 
-    @DeleteMapping("/delete")
+/*    @DeleteMapping("/delete")
     public ApiResponse delete(@RequestParam Long Id) {
         return supplierProductService.delete(Id);
+    }*/
+
+    @DeleteMapping("/delete")
+    public ApiResponse deleteById(@RequestParam(name = "productId") Long productId, @RequestParam(name = "supplierId") Long supplierId) {
+
+        return supplierProductService.deleteById(productId, supplierId);
     }
 
     @GetMapping("/getByID")
