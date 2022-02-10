@@ -1,10 +1,12 @@
-
 package org.app.AirConditioningApplication.Service;
 
-/*
+
+import org.app.AirConditioningApplication.Model.Supplier;
 import org.app.AirConditioningApplication.Model.SupplierProduct;
 import org.app.AirConditioningApplication.Repository.SupplierProductRepo;
-import org.springframework.http.ResponseEntity;
+import org.app.AirConditioningApplication.Repository.SupplierRepo;
+import org.app.AirConditioningApplication.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,57 +15,142 @@ import java.util.Optional;
 @Service
 public class SupplierProductService {
     private final SupplierProductRepo supplierProductRepo;
+    private final SupplierRepo supplierRepo;
 
-    public SupplierProductService(SupplierProductRepo supplierProductRepo) {
+    public SupplierProductService(SupplierProductRepo supplierProductRepo, SupplierRepo supplierRepo) {
         this.supplierProductRepo = supplierProductRepo;
+        this.supplierRepo = supplierRepo;
     }
 
 
-    public ResponseEntity<Object> save(SupplierProduct supplierProduct) {
+    public ApiResponse save(SupplierProduct supplierProduct) {
+        ApiResponse apiResponse = new ApiResponse();
         try {
             supplierProductRepo.save(supplierProduct);
-
-            return ResponseEntity.accepted().body(supplierProduct);
+            apiResponse.setMessage("Successfully added the services in the database");
+            apiResponse.setData(supplierProduct);
+            apiResponse.setStatus(HttpStatus.OK.value());
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> showAll() {
+    public ApiResponse showAll() {
+        ApiResponse apiResponse = new ApiResponse();
         try {
-            List<SupplierProduct> supplierProductList = supplierProductRepo.findAll();
-            if (!supplierProductList.isEmpty())
-                return ResponseEntity.ok().body(supplierProductList);
-            else
-                return ResponseEntity.ok().body("There are no products");
+            List<SupplierProduct> supplierProducts = supplierProductRepo.findAll();
+            if (!supplierProducts.isEmpty()) {
+                apiResponse.setMessage("Successfully fetched the Supplier Product list");
+                apiResponse.setData(supplierProducts);
+                apiResponse.setStatus(HttpStatus.OK.value());
+            } else {
+                apiResponse.setMessage("There is no product in the database");
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setData(null);
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
 
-    public ResponseEntity<Object> getById(Long Id) {
+    public ApiResponse getById(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(Id);
-            if (supplierProduct.isPresent())
-                return ResponseEntity.ok().body(supplierProduct);
-            else return ResponseEntity.ok().body("Invalid ID");
+            if (supplierProduct.isPresent()) {
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully fetched the supplier product");
+                apiResponse.setData(supplierProduct);
+            } else {
+                apiResponse.setData(null);
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no supplier product in the database");
+            }
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 
-    public ResponseEntity<Object> delete(Long Id) {
+
+    public ApiResponse deleteById(Long supplierProductId, Long supplierId) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Optional<Supplier> supplier = supplierRepo.findById(supplierId);
+            if (supplier.isPresent()) {
+                List<SupplierProduct> products = supplier.get().getSupplierProducts();
+
+                for (int i = 0; i < products.size(); i++) {
+                    if (products.get(i).getProductId().longValue() == supplierProductId.longValue()) {
+                        products.remove(products.get(i));
+                    }
+                }
+                /*for (SupplierProduct suppProduct : products
+                ) {
+                    if ((supplierProductId.longValue() == suppProduct.getProductId().longValue())) {
+                        products.remove(suppProduct);
+                    }
+                }*/
+                supplier.get().setSupplierProducts(products);
+                supplierRepo.save(supplier.get());
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no Supplier against this ID");
+            }
+            /*Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
+            if (supplierProduct.isPresent()) {
+                supplierProductRepo.delete(supplierProduct.get());
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted the SupplierProduct");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no SupplierProduct against this ID");
+            }*/
+            apiResponse.setData(supplier.get());
+            return apiResponse;
+        } catch (Exception e) {
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
+        }
+    }
+
+    public ApiResponse delete(Long Id) {
+        ApiResponse apiResponse = new ApiResponse();
+
         try {
             Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(Id);
             if (supplierProduct.isPresent()) {
                 supplierProductRepo.delete(supplierProduct.get());
-                return ResponseEntity.ok().body("Deleted");
-            } else return ResponseEntity.ok().body("Invalid ID");
+                apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setMessage("Successfully Deleted the SupplierProduct");
+            } else {
+                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                apiResponse.setMessage("There is no SupplierProduct against this ID");
+            }
+            apiResponse.setData(null);
+            return apiResponse;
         } catch (Exception e) {
-            return ResponseEntity.ok().body(e.getMessage());
+            apiResponse.setData(null);
+            apiResponse.setMessage(e.getMessage());
+            apiResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return apiResponse;
         }
     }
 }
-*/
+

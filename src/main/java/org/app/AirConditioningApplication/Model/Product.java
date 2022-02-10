@@ -24,4 +24,6 @@ public class Product {
     private double price;
     private int quantityInStock;
     private double tax;
+    private Integer productQuantity;
+    private boolean addedToBudgetCart;
 }

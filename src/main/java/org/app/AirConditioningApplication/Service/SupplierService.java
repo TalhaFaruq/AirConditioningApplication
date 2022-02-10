@@ -57,6 +57,7 @@ public class SupplierService {
     public ApiResponse save(Supplier supplier) {
         ApiResponse apiResponse = new ApiResponse();
         try {
+            supplier.setSupplierId(null);
             supplierRepo.save(supplier);
             apiResponse.setMessage("Supplier Successfully added in the database");
             apiResponse.setData(supplier);

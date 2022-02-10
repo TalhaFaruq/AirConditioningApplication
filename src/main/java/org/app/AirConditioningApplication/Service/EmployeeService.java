@@ -30,8 +30,9 @@ public class EmployeeService {
     public ApiResponse save(Employee employee) {
         ApiResponse apiResponse = new ApiResponse();
         try {
+            employee.setEmployeeId(null);
             employeeRepo.save(employee);
-            apiResponse.setMessage("Successfully added in the database");
+            apiResponse.setMessage("Successfully created the employee in the database");
             apiResponse.setData(employee);
             apiResponse.setStatus(HttpStatus.OK.value());
             return apiResponse;
