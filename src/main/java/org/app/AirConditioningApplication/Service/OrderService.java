@@ -151,13 +151,6 @@ public class OrderService {
             order.setCustomer(budget.get().getCustomer());
             List<Product> productList = budget.get().getProductList();
             List<Integer> objectList = BudgetService.map.get(budget.get().getBudgetId());
-            /*for (Product product : productList
-            ) {
-                for (int i = 0; i < objectList.size(); i++) {
-                    product.setProductQuantity(objectList.get(i));
-                }
-                order.getProductList().add(product);
-            }*/
             for (int i = 0; i < productList.size(); i++) {
                 productList.get(i).setProductQuantity(objectList.get(i));
                 order.getProductList().add(productList.get(i));

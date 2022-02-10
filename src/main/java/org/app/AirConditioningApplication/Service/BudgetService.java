@@ -64,9 +64,12 @@ public class BudgetService {
             ) {
                 productQuantityList.add(product.getProductQuantity());
                 budget.setTotalPrice(product.getPrice() * product.getProductQuantity() + budget.getTotalPrice());
-                Product dbProduct = productRepo.getById(product.getProductId());
-                dbProduct.setQuantityInStock(dbProduct.getProductQuantity() - product.getProductQuantity());
-                productRepo.save(dbProduct);
+                Optional<Product> dbProduct = productRepo.findById(product.getProductId());
+                if(dbProduct.isPresent()){
+                    dbProduct.get().setQuantityInStock(dbProduct.get().getQuantityInStock() - product.getProductQuantity());
+                    productRepo.save(dbProduct.get());
+                }
+
             }
             List<WageHoursPrice> wageHoursPrices = wageHoursPriceRepo.findAll();
             budget.setTotalPrice(budget.getTotalPrice() +
