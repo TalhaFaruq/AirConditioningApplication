@@ -41,14 +41,11 @@ public class BudgetService {
 
     public ApiResponse save(Budget budget) {
         ApiResponse apiResponse = new ApiResponse();
-
-
         try {
             budget.setBudgetId(null);
 
             Optional<Customer> customer = customerRepo.findById(budget.getCustomer().getCustomerId());
             if (!customer.isPresent()) {
-//                budget.getCustomer().setCustomerId(null);
                 Customer customer1 = new Customer();
                 customer1.setName(budget.getCustomer().getName());
                 customerRepo.save(customer1);
@@ -60,7 +57,7 @@ public class BudgetService {
 
             for (Product product : budget.getProductList()
             ) {
-                budget.setTotalPrice(product.getPrice() + budget.getTotalPrice());
+                budget.setTotalPrice(product.getPrice() * product.getProductQuantity() + budget.getTotalPrice());
             }
             budget.setTotalPrice(budget.getTotalPrice() + budget.getOfficerHours() * 20 + budget.getAssistantHours() * 15);
             budgetRepo.save(budget);
