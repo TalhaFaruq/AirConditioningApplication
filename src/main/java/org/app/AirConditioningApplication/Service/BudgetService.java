@@ -106,7 +106,8 @@ public class BudgetService {
                     budget.getOfficerHours() * wageHoursPrices.get(0).getOfficerHours() +
                     budget.getAssistantHours() * wageHoursPrices.get(0).getAssistantHours());
             budgetRepo.save(budget);
-
+            PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budget);
+            pdfBudgetTable.pdfdownload();
             if (budget.getBudgetStatus().equalsIgnoreCase("accepted")) {
                 orderService.budgetToOrder(budget.getBudgetId());
             }
