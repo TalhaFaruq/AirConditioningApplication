@@ -3,9 +3,11 @@ package org.app.AirConditioningApplication.Service;
 import org.app.AirConditioningApplication.Model.Budget;
 import org.app.AirConditioningApplication.Model.Customer;
 import org.app.AirConditioningApplication.Model.Product;
+import org.app.AirConditioningApplication.Model.WageHoursPrice;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.CustomerRepo;
 import org.app.AirConditioningApplication.Repository.ProductRepo;
+import org.app.AirConditioningApplication.Repository.WageHoursPriceRepo;
 import org.app.AirConditioningApplication.Utilities.PdfBudgetTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +31,16 @@ public class BudgetService {
     private final ProductRepo productRepo;
     private final CustomerRepo customerRepo;
     private final OrderService orderService;
+    private final WageHoursPriceRepo wageHoursPriceRepo;
 
     @Autowired
-    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo, CustomerRepo customerRepo, OrderService orderService) {
+    public BudgetService(BudgetRepo budgetRepo, ProductRepo productRepo, CustomerRepo customerRepo, OrderService orderService, WageHoursPriceRepo wageHoursPriceRepo) {
         this.budgetRepo = budgetRepo;
 
         this.productRepo = productRepo;
         this.customerRepo = customerRepo;
         this.orderService = orderService;
+        this.wageHoursPriceRepo = wageHoursPriceRepo;
     }
 
     public ApiResponse save(Budget budget) {
@@ -59,7 +63,10 @@ public class BudgetService {
             ) {
                 budget.setTotalPrice(product.getPrice() * product.getProductQuantity() + budget.getTotalPrice());
             }
-            budget.setTotalPrice(budget.getTotalPrice() + budget.getOfficerHours() * 20 + budget.getAssistantHours() * 15);
+            List<WageHoursPrice> wageHoursPrices = wageHoursPriceRepo.findAll();
+            budget.setTotalPrice(budget.getTotalPrice() +
+                    budget.getOfficerHours() * wageHoursPrices.get(0).getOfficerHours() +
+                    budget.getAssistantHours() * wageHoursPrices.get(0).getAssistantHours());
             budgetRepo.save(budget);
 
             apiResponse.setMessage("Budget Successfully added in the database");
@@ -80,11 +87,15 @@ public class BudgetService {
     public ApiResponse update(Budget budget) {
         ApiResponse apiResponse = new ApiResponse();
         try {
-
+            budget.setTotalPrice(0);
             for (Product product : budget.getProductList()
             ) {
-                budget.setTotalPrice(product.getPrice() + budget.getTotalPrice());
+                budget.setTotalPrice(product.getPrice() * product.getProductQuantity() + budget.getTotalPrice());
             }
+            List<WageHoursPrice> wageHoursPrices = wageHoursPriceRepo.findAll();
+            budget.setTotalPrice(budget.getTotalPrice() +
+                    budget.getOfficerHours() * wageHoursPrices.get(0).getOfficerHours() +
+                    budget.getAssistantHours() * wageHoursPrices.get(0).getAssistantHours());
             budgetRepo.save(budget);
 
             if (budget.getBudgetStatus().equalsIgnoreCase("accepted")) {
