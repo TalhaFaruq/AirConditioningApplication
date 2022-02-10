@@ -3,6 +3,7 @@ package org.app.AirConditioningApplication.Service;
 import org.app.AirConditioningApplication.Model.*;
 import org.app.AirConditioningApplication.Repository.BudgetRepo;
 import org.app.AirConditioningApplication.Repository.OrderRepo;
+import org.app.AirConditioningApplication.Repository.WageHoursPriceRepo;
 import org.app.AirConditioningApplication.Repository.WorkLogRepo;
 import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
@@ -25,11 +26,14 @@ public class OrderService {
     private final OrderRepo orderRepo;
     private final BudgetRepo budgetRepo;
     private final WorkLogRepo workLogRepo;
+    private final WageHoursPriceRepo wageHoursPriceRepo;
 
-    public OrderService(OrderRepo orderRepo, BudgetRepo budgetRepo, WorkLogRepo workLogRepo) {
+
+    public OrderService(OrderRepo orderRepo, BudgetRepo budgetRepo, WorkLogRepo workLogRepo, WageHoursPriceRepo wageHoursPriceRepo) {
         this.orderRepo = orderRepo;
         this.budgetRepo = budgetRepo;
         this.workLogRepo = workLogRepo;
+        this.wageHoursPriceRepo = wageHoursPriceRepo;
     }
 
     public ApiResponse save(Order order) {
@@ -146,14 +150,23 @@ public class OrderService {
             }
             order.setCustomer(budget.get().getCustomer());
             List<Product> productList = budget.get().getProductList();
-            for (Product product : productList
+            List<Integer> objectList = BudgetService.map.get(budget.get().getBudgetId());
+            /*for (Product product : productList
             ) {
+                for (int i = 0; i < objectList.size(); i++) {
+                    product.setProductQuantity(objectList.get(i));
+                }
                 order.getProductList().add(product);
+            }*/
+            for (int i = 0; i < productList.size(); i++) {
+                productList.get(i).setProductQuantity(objectList.get(i));
+                order.getProductList().add(productList.get(i));
             }
 
             order.setTotalPrice(budget.get().getTotalPrice());
             order.setOrderName(budget.get().getBudgetName());
-            order.setEmpPrice(budget.get().getOfficerHours() * 20 + budget.get().getAssistantHours() * 15);
+            List<WageHoursPrice> wageHoursPrices = wageHoursPriceRepo.findAll();
+            order.setEmpPrice(budget.get().getOfficerHours() * wageHoursPrices.get(0).getOfficerHours() + budget.get().getAssistantHours() * 15);
             orderRepo.save(order);
             budgetRepo.save(budget.get());
             apiResponse.setStatus(HttpStatus.OK.value());
