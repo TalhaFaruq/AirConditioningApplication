@@ -134,14 +134,14 @@ public class PdfBudgetTable {
     }
 
     public PdfPTable products(List<Product> productList) throws DocumentException {
-        PdfPTable productTable = new PdfPTable(3); // 3 columns.
+        PdfPTable productTable = new PdfPTable(4); // 4 columns.
         productTable.setWidthPercentage(100); //Width 100%
         productTable.setSpacingBefore(10f); //Space before productTable
         productTable.setSpacingAfter(10f); //Space after productTable
 
 
         //Set Column widths
-        float[] columnWidths = {1f, 1f, 1f};
+        float[] columnWidths = {1f, 1f, 1f, 1f};
         productTable.setWidths(columnWidths);
 
         PdfPCell cell1 = new PdfPCell(new Paragraph("Product ID"));
@@ -163,13 +163,21 @@ public class PdfBudgetTable {
         cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
+        PdfPCell cell4 = new PdfPCell(new Paragraph("Product Quantity"));
+        cell4.setBorderColor(BaseColor.BLUE);
+        cell4.setPaddingLeft(10);
+        cell4.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
+
         productTable.addCell(cell1);
         productTable.addCell(cell2);
         productTable.addCell(cell3);
+        productTable.addCell(cell4);
         for (Product product : productList) {
             productTable.addCell(product.getProductId().toString());
             productTable.addCell(product.getName());
             productTable.addCell(String.valueOf(product.getPrice()));
+            productTable.addCell(String.valueOf(product.getProductQuantity()));
         }
         return productTable;
     }
