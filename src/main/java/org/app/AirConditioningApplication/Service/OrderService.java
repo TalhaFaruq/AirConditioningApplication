@@ -40,6 +40,7 @@ public class OrderService {
         ApiResponse apiResponse = new ApiResponse();
         try {
             orderRepo.save(order);
+            printPdf(order.getOrderId());
             apiResponse.setMessage("Order successfully added in the database");
             apiResponse.setData(order);
             apiResponse.setStatus(HttpStatus.OK.value());
