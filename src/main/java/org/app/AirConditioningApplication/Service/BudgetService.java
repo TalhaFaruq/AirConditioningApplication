@@ -29,7 +29,7 @@ import java.util.Optional;
 
 @Service
 public class BudgetService {
-    public static HashMap<Long, List<Integer>> map = new HashMap<>();
+    public static HashMap<Long, List<Integer>> budgetIdsMap = new HashMap<>();
     private final BudgetRepo budgetRepo;
     private final ProductRepo productRepo;
     private final CustomerRepo customerRepo;
@@ -65,8 +65,9 @@ public class BudgetService {
                 productQuantityList.add(product.getProductQuantity());
                 budget.setTotalPrice(product.getPrice() * product.getProductQuantity() + budget.getTotalPrice());
                 Optional<Product> dbProduct = productRepo.findById(product.getProductId());
-                if(dbProduct.isPresent()){
-                    dbProduct.get().setQuantityInStock(dbProduct.get().getQuantityInStock() - product.getProductQuantity());
+                if (dbProduct.isPresent()) {
+                    dbProduct.get().setQuantityInStock(product.getQuantityInStock());
+//                    dbProduct.get().setQuantityInStock(dbProduct.get().getQuantityInStock() - product.getProductQuantity());
                     productRepo.save(dbProduct.get());
                 }
 
@@ -77,7 +78,7 @@ public class BudgetService {
                     budget.getAssistantHours() * wageHoursPrices.get(0).getAssistantHours());
             budgetRepo.save(budget);
 
-            map.put(budget.getBudgetId(), productQuantityList);
+            budgetIdsMap.put(budget.getBudgetId(), productQuantityList);
 
             apiResponse.setMessage("Budget Successfully added in the database");
             apiResponse.setData(budget);

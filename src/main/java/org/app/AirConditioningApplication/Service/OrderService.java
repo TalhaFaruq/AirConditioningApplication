@@ -1,10 +1,7 @@
 package org.app.AirConditioningApplication.Service;
 
 import org.app.AirConditioningApplication.Model.*;
-import org.app.AirConditioningApplication.Repository.BudgetRepo;
-import org.app.AirConditioningApplication.Repository.OrderRepo;
-import org.app.AirConditioningApplication.Repository.WageHoursPriceRepo;
-import org.app.AirConditioningApplication.Repository.WorkLogRepo;
+import org.app.AirConditioningApplication.Repository.*;
 import org.app.AirConditioningApplication.Utilities.PdfOrderTable;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.core.io.InputStreamResource;
@@ -27,18 +24,32 @@ public class OrderService {
     private final BudgetRepo budgetRepo;
     private final WorkLogRepo workLogRepo;
     private final WageHoursPriceRepo wageHoursPriceRepo;
+    private final ProductRepo productRepo;
 
 
-    public OrderService(OrderRepo orderRepo, BudgetRepo budgetRepo, WorkLogRepo workLogRepo, WageHoursPriceRepo wageHoursPriceRepo) {
+
+    public OrderService(OrderRepo orderRepo, BudgetRepo budgetRepo, WorkLogRepo workLogRepo, WageHoursPriceRepo wageHoursPriceRepo, ProductRepo productRepo) {
         this.orderRepo = orderRepo;
         this.budgetRepo = budgetRepo;
         this.workLogRepo = workLogRepo;
         this.wageHoursPriceRepo = wageHoursPriceRepo;
+        this.productRepo = productRepo;
     }
 
     public ApiResponse save(Order order) {
         ApiResponse apiResponse = new ApiResponse();
         try {
+            order.setTotalPrice(0);
+            for (Product product : order.getProductList()
+            ) {
+                order.setTotalPrice(order.getTotalPrice() + product.getPrice() * product.getProductQuantity());
+                Optional<Product> dbProduct = productRepo.findById(product.getProductId());
+                if (dbProduct.isPresent()) {
+                    dbProduct.get().setQuantityInStock(product.getQuantityInStock());
+                    productRepo.save(dbProduct.get());
+                }
+            }
+            order.setTotalPrice(order.getTotalPrice() + order.getEmpPrice());
             orderRepo.save(order);
             printPdf(order.getOrderId());
             apiResponse.setMessage("Order successfully added in the database");
@@ -151,7 +162,7 @@ public class OrderService {
             }
             order.setCustomer(budget.get().getCustomer());
             List<Product> productList = budget.get().getProductList();
-            List<Integer> objectList = BudgetService.map.get(budget.get().getBudgetId());
+            List<Integer> objectList = BudgetService.budgetIdsMap.get(budget.get().getBudgetId());
             for (int i = 0; i < productList.size(); i++) {
                 productList.get(i).setProductQuantity(objectList.get(i));
                 order.getProductList().add(productList.get(i));
