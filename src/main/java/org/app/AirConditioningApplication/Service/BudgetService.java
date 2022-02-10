@@ -22,11 +22,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BudgetService {
+    public static HashMap<Long, List<Integer>> map = new HashMap<>();
     private final BudgetRepo budgetRepo;
     private final ProductRepo productRepo;
     private final CustomerRepo customerRepo;
@@ -47,7 +50,6 @@ public class BudgetService {
         ApiResponse apiResponse = new ApiResponse();
         try {
             budget.setBudgetId(null);
-
             Optional<Customer> customer = customerRepo.findById(budget.getCustomer().getCustomerId());
             if (!customer.isPresent()) {
                 Customer customer1 = new Customer();
@@ -55,13 +57,16 @@ public class BudgetService {
                 customerRepo.save(customer1);
                 budget.setCustomer(customer1);
             }
-
             //As the budget is Quotation, order is final receipt
             budget.setBudgetStatus("Pending");
-
+            List<Integer> productQuantityList = new ArrayList<>();
             for (Product product : budget.getProductList()
             ) {
+                productQuantityList.add(product.getProductQuantity());
                 budget.setTotalPrice(product.getPrice() * product.getProductQuantity() + budget.getTotalPrice());
+                Product dbProduct = productRepo.getById(product.getProductId());
+                dbProduct.setQuantityInStock(dbProduct.getProductQuantity() - product.getProductQuantity());
+                productRepo.save(dbProduct);
             }
             List<WageHoursPrice> wageHoursPrices = wageHoursPriceRepo.findAll();
             budget.setTotalPrice(budget.getTotalPrice() +
@@ -69,12 +74,13 @@ public class BudgetService {
                     budget.getAssistantHours() * wageHoursPrices.get(0).getAssistantHours());
             budgetRepo.save(budget);
 
+            map.put(budget.getBudgetId(), productQuantityList);
+
             apiResponse.setMessage("Budget Successfully added in the database");
             apiResponse.setData(budget);
             apiResponse.setStatus(HttpStatus.OK.value());
             PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budget);
             pdfBudgetTable.pdfdownload();
-//            pdfCall(budget.getBudgetId());
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setData(null);
