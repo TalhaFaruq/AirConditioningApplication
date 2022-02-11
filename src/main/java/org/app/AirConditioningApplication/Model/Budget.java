@@ -15,12 +15,13 @@ import java.util.List;
 @Setter
 @Entity
 public class Budget {   //This is Quotation
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "budget_id", referencedColumnName = "budgetId")
     List<Product> productList = new ArrayList<>();
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     Customer customer;
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "budget_id", referencedColumnName = "budgetId")
     List<Services> service = new ArrayList<>();
     @Id
