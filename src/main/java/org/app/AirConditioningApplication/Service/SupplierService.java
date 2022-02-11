@@ -91,6 +91,8 @@ public class SupplierService {
 
                     product.setPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
                     product.setCharacteristics(supplierProduct.get().getCharacteristics());
+                    product.setProductQuantity(0);
+                    product.setAddedToBudgetCart(true);
                     productRepo.save(product);
                     apiResponse.setMessage("Successfully purchased the new product from supplier");
                 }
