@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SupplierService {
@@ -94,13 +95,20 @@ public class SupplierService {
                     apiResponse.setMessage("Successfully purchased the new product from supplier");
                 }
                 SupplierPurchasedHistory supplierPurchasedHistory = new SupplierPurchasedHistory();
+                supplierPurchasedHistory.setSupplierOrderId(UUID.randomUUID().toString());
+
+                List<SupplierProduct> purchasedHistoryProductsList = supplierPurchasedHistory.getSupplierProducts();
+                purchasedHistoryProductsList.add(supplierProduct.get());
+
+                supplierPurchasedHistory.setSupplierProducts(purchasedHistoryProductsList);
+//                supplierPurchasedHistory.getSupplierProducts().add(supplierProduct.get());
+                supplierPurchasedHistory.setTotalPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
+//                supplierPurchasedHistoryService.save(supplierPurchasedHistory);
+                supplierPurchasedHistoryRepository.save(supplierPurchasedHistory);
+                supplierPurchasedHistoryService.pdfDownload(supplierPurchasedHistory.getSupplierOrderId());
+
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setData(supplierProduct);
-
-                supplierPurchasedHistory.getSupplierProducts().add(supplierProduct.get());
-                supplierPurchasedHistory.setTotalPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
-                supplierPurchasedHistoryService.save(supplierPurchasedHistory);
-                supplierPurchasedHistoryService.pdfDownload(supplierPurchasedHistory.getSupplierOrderId());
 
             } else {
                 apiResponse.setMessage("There is no supplier Product against this ID in the database");
