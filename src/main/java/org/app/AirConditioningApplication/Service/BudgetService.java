@@ -53,12 +53,15 @@ public class BudgetService {
             Optional<Customer> customer = customerRepo.findById(budget.getCustomer().getCustomerId());
             if (!customer.isPresent()) {
                 Customer customer1 = new Customer();
+                customer1.setCustomerId(null);
                 customer1.setName(budget.getCustomer().getName());
                 customerRepo.save(customer1);
                 budget.setCustomer(customer1);
+            } else {
+                budget.setCustomer(customer.get());
             }
             //As the budget is Quotation, order is final receipt
-            budget.setBudgetStatus("Pending");
+//            budget.setBudgetStatus("Pending");
             List<Integer> productQuantityList = new ArrayList<>();
             for (Product product : budget.getProductList()
             ) {
@@ -67,7 +70,6 @@ public class BudgetService {
                 Optional<Product> dbProduct = productRepo.findById(product.getProductId());
                 if (dbProduct.isPresent()) {
                     dbProduct.get().setQuantityInStock(product.getQuantityInStock());
-//                    dbProduct.get().setQuantityInStock(dbProduct.get().getQuantityInStock() - product.getProductQuantity());
                     productRepo.save(dbProduct.get());
                 }
 
@@ -76,12 +78,13 @@ public class BudgetService {
             budget.setTotalPrice(budget.getTotalPrice() +
                     budget.getOfficerHours() * wageHoursPrices.get(0).getOfficerHours() +
                     budget.getAssistantHours() * wageHoursPrices.get(0).getAssistantHours());
+            apiResponse.setData(budget);
+
             budgetRepo.save(budget);
 
             budgetIdsMap.put(budget.getBudgetId(), productQuantityList);
 
             apiResponse.setMessage("Budget Successfully added in the database");
-            apiResponse.setData(budget);
             apiResponse.setStatus(HttpStatus.OK.value());
             PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budget);
             pdfBudgetTable.pdfdownload();
@@ -98,20 +101,45 @@ public class BudgetService {
         ApiResponse apiResponse = new ApiResponse();
         try {
             budget.setTotalPrice(0);
+            Optional<Customer> customer = customerRepo.findById(budget.getCustomer().getCustomerId());
+            if (!customer.isPresent()) {
+                Customer customer1 = new Customer();
+                customer1.setCustomerId(null);
+                customer1.setName(budget.getCustomer().getName());
+                customerRepo.save(customer1);
+                budget.setCustomer(customer1);
+            } else {
+                budget.setCustomer(customer.get());
+            }
+
+            List<Integer> productQuantityList = new ArrayList<>();
             for (Product product : budget.getProductList()
             ) {
+                productQuantityList.add(product.getProductQuantity());
                 budget.setTotalPrice(product.getPrice() * product.getProductQuantity() + budget.getTotalPrice());
+                Optional<Product> dbProduct = productRepo.findById(product.getProductId());
+                if (dbProduct.isPresent()) {
+                    dbProduct.get().setQuantityInStock(product.getQuantityInStock());
+                    productRepo.save(dbProduct.get());
+                }
             }
+
             List<WageHoursPrice> wageHoursPrices = wageHoursPriceRepo.findAll();
             budget.setTotalPrice(budget.getTotalPrice() +
                     budget.getOfficerHours() * wageHoursPrices.get(0).getOfficerHours() +
                     budget.getAssistantHours() * wageHoursPrices.get(0).getAssistantHours());
+
+
             budgetRepo.save(budget);
+
+            budgetIdsMap.put(budget.getBudgetId(), productQuantityList);
+
             PdfBudgetTable pdfBudgetTable = new PdfBudgetTable(budget);
             pdfBudgetTable.pdfdownload();
-            if (budget.getBudgetStatus().equalsIgnoreCase("accepted")) {
+
+            /*if (budget.getBudgetStatus().equalsIgnoreCase("accepted")) {
                 orderService.budgetToOrder(budget.getBudgetId());
-            }
+            }*/
 
             apiResponse.setMessage("Budget Successfully updated in the database");
             apiResponse.setData(budget);
