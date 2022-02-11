@@ -45,7 +45,7 @@ public class WageHoursPriceService {
                 apiResponse.setMessage("Following is the list of WageHours Price in the database");
                 apiResponse.setStatus(HttpStatus.OK.value());
             }
-            apiResponse.setData(wageHoursPrice);
+            apiResponse.setData(wageHoursPrice.get(0));
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setData(null);
