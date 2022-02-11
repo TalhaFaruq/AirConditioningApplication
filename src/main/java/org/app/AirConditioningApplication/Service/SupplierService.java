@@ -83,6 +83,7 @@ public class SupplierService {
                     apiResponse.setMessage("Successfully updated the stock in products");
                 } else {
                     Product product = new Product();
+                    product.setProductId(null);
                     product.setName(supplierProduct.get().getName());
                     product.setQuantityInStock(quantityToBuy);
                     product.setTax(supplierProduct.get().getTax());
@@ -116,33 +117,6 @@ public class SupplierService {
         }
     }
 
-
-/*    public ApiResponse buyProductsFromSupplier(Supplier supplier, Integer quantityToBuy) {
-        ApiResponse apiResponse = new ApiResponse();
-
-        Optional<Product> optionalProduct = productRepo.findByName(supplier.getSupplierProducts().get(0).getName());
-        if (optionalProduct.isPresent()) {
-            optionalProduct.get().setQuantityInStock(optionalProduct.get().getQuantityInStock() + quantityToBuy);
-            productRepo.save(optionalProduct.get());
-            apiResponse.setMessage("Successfully updated the stock in products");
-        } else {
-            Product product = new Product();
-            product.setName(supplier.getSupplierProducts().get(0).getName());
-            product.setQuantityInStock(quantityToBuy);
-            product.setTax(supplier.getSupplierProducts().get(0).getTax());
-
-            product.setPrice(supplier.getSupplierProducts().get(0).getBasePrice() + ((supplier.getSupplierProducts().get(0).getTax() / 100) * supplier.getSupplierProducts().get(0).getBasePrice()));
-            product.setCharacteristics(supplier.getSupplierProducts().get(0).getCharacteristics());
-            productRepo.save(product);
-
-            apiResponse.setMessage("Successfully purchased the product from supplier");
-        }
-
-        apiResponse.setStatus(HttpStatus.OK.value());
-        apiResponse.setData(supplier);
-        return apiResponse;
-    }*/
-
     public ApiResponse buyMultipleProductsFromSupplier(List<Supplier> supplierList) {
         ApiResponse apiResponse = new ApiResponse();
 
@@ -160,6 +134,7 @@ public class SupplierService {
                     productRepo.save(alreadyPresentProduct.get());
                 } else {
                     Product ourProduct = new Product();
+                    ourProduct.setProductId(null);
                     ourProduct.setName(supplierProduct.getName());
                     ourProduct.setQuantityInStock(supplierProduct.getProductCount());
                     ourProduct.setTax(supplierProduct.getTax());
