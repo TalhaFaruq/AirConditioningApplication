@@ -5,7 +5,7 @@ import org.app.AirConditioningApplication.Service.WageHoursPriceService;
 import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/WageHoursPrice")
 public class WageHoursPriceController {
