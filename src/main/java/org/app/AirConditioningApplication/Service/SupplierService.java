@@ -255,9 +255,10 @@ public class SupplierService {
             if (supplier.isPresent()) {
                 supplier.get().getSupplierProducts().add(supplierProduct);
                 supplierRepo.save(supplier.get());
+                List<SupplierProduct> products = supplier.get().getSupplierProducts();
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setMessage("Successfully added new product in the supplier");
-                apiResponse.setData(supplier);
+                apiResponse.setData(products.get(products.size() - 1));
             } else {
                 apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
