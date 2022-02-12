@@ -106,6 +106,7 @@ public class SupplierProductService {
                     }
                 }*/
                 supplier.get().setSupplierProducts(products);
+                apiResponse.setStatus(HttpStatus.OK.value());
                 supplierRepo.save(supplier.get());
             } else {
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
