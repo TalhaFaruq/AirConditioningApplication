@@ -6,9 +6,9 @@ import org.app.AirConditioningApplication.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/WageHoursPrice")
+@RequestMapping("WageHoursPrice")
 public class WageHoursPriceController {
     private final WageHoursPriceService wageHoursPriceService;
 
