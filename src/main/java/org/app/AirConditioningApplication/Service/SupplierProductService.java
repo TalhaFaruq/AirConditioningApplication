@@ -99,29 +99,15 @@ public class SupplierProductService {
                         products.remove(products.get(i));
                     }
                 }
-                /*for (SupplierProduct suppProduct : products
-                ) {
-                    if ((supplierProductId.longValue() == suppProduct.getProductId().longValue())) {
-                        products.remove(suppProduct);
-                    }
-                }*/
                 supplier.get().setSupplierProducts(products);
                 apiResponse.setStatus(HttpStatus.OK.value());
+                apiResponse.setData(supplier.get());
                 supplierRepo.save(supplier.get());
             } else {
+                apiResponse.setData(null);
                 apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 apiResponse.setMessage("There is no Supplier against this ID");
             }
-            /*Optional<SupplierProduct> supplierProduct = supplierProductRepo.findById(supplierProductId);
-            if (supplierProduct.isPresent()) {
-                supplierProductRepo.delete(supplierProduct.get());
-                apiResponse.setStatus(HttpStatus.OK.value());
-                apiResponse.setMessage("Successfully Deleted the SupplierProduct");
-            } else {
-                apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                apiResponse.setMessage("There is no SupplierProduct against this ID");
-            }*/
-            apiResponse.setData(supplier.get());
             return apiResponse;
         } catch (Exception e) {
             apiResponse.setData(null);
