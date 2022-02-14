@@ -172,7 +172,7 @@ public class PdfOrderTable {
         for (Product product : productList) {
             productTable.addCell(product.getProductId().toString());
             productTable.addCell(product.getName());
-            productTable.addCell(String.valueOf(product.getPrice()));
+            productTable.addCell(String.valueOf(product.getBasePrice()));
             productTable.addCell(String.valueOf(product.getProductQuantity()));
         }
         return productTable;

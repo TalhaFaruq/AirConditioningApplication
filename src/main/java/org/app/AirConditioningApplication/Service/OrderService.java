@@ -42,7 +42,7 @@ public class OrderService {
             order.setTotalPrice(0);
             for (Product product : order.getProductList()
             ) {
-                order.setTotalPrice(order.getTotalPrice() + product.getPrice() * product.getProductQuantity());
+                order.setTotalPrice(order.getTotalPrice() + product.getBasePrice() * product.getProductQuantity());
                 Optional<Product> dbProduct = productRepo.findById(product.getProductId());
                 if (dbProduct.isPresent()) {
                     dbProduct.get().setQuantityInStock(product.getQuantityInStock());

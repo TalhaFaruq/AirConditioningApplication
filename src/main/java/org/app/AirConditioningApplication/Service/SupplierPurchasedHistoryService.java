@@ -113,12 +113,12 @@ public class SupplierPurchasedHistoryService {
         }
     }
 
-    public ApiResponse pdfDownload(String id) {
+    public ApiResponse pdfDownload(String id, int quantityToBuy) {
         ApiResponse apiResponse = new ApiResponse();
         try {
             Optional<SupplierPurchasedHistory> supplierPurchasedHistory = supplierPurchasedHistoryRepository.findById(id);
             if (supplierPurchasedHistory.isPresent()) {
-                PdfSupplierPurchase pdfSupplierPurchase = new PdfSupplierPurchase(supplierPurchasedHistory.get());
+                PdfSupplierPurchase pdfSupplierPurchase = new PdfSupplierPurchase(supplierPurchasedHistory.get(), quantityToBuy);
 
                 pdfSupplierPurchase.pdfdownload();
                 apiResponse.setData(supplierPurchasedHistory);

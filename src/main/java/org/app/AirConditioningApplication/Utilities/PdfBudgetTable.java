@@ -176,7 +176,9 @@ public class PdfBudgetTable {
         for (Product product : productList) {
             productTable.addCell(product.getProductId().toString());
             productTable.addCell(product.getName());
-            productTable.addCell(String.valueOf(product.getPrice()));
+            double totalTaxAmount = ((product.getTax() / 100) * product.getBasePrice()) * product.getProductQuantity();
+
+            productTable.addCell(String.valueOf(product.getFinalPrice() + totalTaxAmount));
             productTable.addCell(String.valueOf(product.getProductQuantity()));
         }
         return productTable;

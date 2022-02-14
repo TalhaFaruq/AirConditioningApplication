@@ -13,9 +13,11 @@ import java.util.List;
 
 public class PdfSupplierPurchase {
     private final SupplierPurchasedHistory supplierPurchasedHistory;
+    private final int quantityToBuy;
 
-    public PdfSupplierPurchase(SupplierPurchasedHistory supplierPurchasedHistory) {
+    public PdfSupplierPurchase(SupplierPurchasedHistory supplierPurchasedHistory, int quantityToBuy) {
         this.supplierPurchasedHistory = supplierPurchasedHistory;
+        this.quantityToBuy = quantityToBuy;
     }
 
     public void pdfdownload() {
@@ -124,7 +126,7 @@ public class PdfSupplierPurchase {
         cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-        PdfPCell cell6 = new PdfPCell(new Paragraph("Product Count"));
+        PdfPCell cell6 = new PdfPCell(new Paragraph("Quantity"));
         cell3.setBorderColor(BaseColor.BLUE);
         cell3.setPaddingLeft(10);
         cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -143,7 +145,7 @@ public class PdfSupplierPurchase {
             productTable.addCell(String.valueOf(supplierProduct.getCharacteristics()));
             productTable.addCell(String.valueOf(supplierProduct.getBasePrice()));
             productTable.addCell(String.valueOf(supplierProduct.getTax()));
-            productTable.addCell(String.valueOf(supplierProduct.getProductCount()));
+            productTable.addCell(String.valueOf(quantityToBuy));
         }
         return productTable;
     }

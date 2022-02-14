@@ -21,7 +21,8 @@ public class Product {
     private Long ProductId;
     private String name;
     private String characteristics;
-    private double price;
+    private double basePrice;
+    private double finalPrice;
     private int quantityInStock;
     private double tax;
     private Integer productQuantity;
