@@ -144,11 +144,9 @@ public class PdfSupplierPurchase {
             productTable.addCell(supplierProduct.getName());
             productTable.addCell(String.valueOf(supplierProduct.getCharacteristics()));
             productTable.addCell(String.valueOf(supplierProduct.getBasePrice()));
-            productTable.addCell(String.valueOf(supplierProduct.getTax()));
+            productTable.addCell(String.valueOf(supplierProduct.getTax()) + "%");
             productTable.addCell(String.valueOf(quantityToBuy));
         }
         return productTable;
     }
-
-
 }
