@@ -42,10 +42,10 @@ public class SupplierPurchasedHistoryController {
         return supplierPurchasedHistoryService.getById(id);
     }
 
-    @GetMapping("/downloadPdf")
+/*    @GetMapping("/downloadPdf")
     public ApiResponse downloadSupplierPurchasedHistory(@RequestParam(name = "id") String id) {
         return supplierPurchasedHistoryService.pdfDownload(id);
-    }
+    }*/
 
     @GetMapping("/downloadFile")
     public ResponseEntity<Object> downloadFile(@RequestParam(name = "supplierBudgetId") String supplierBudgetId) {

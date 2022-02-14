@@ -89,7 +89,9 @@ public class SupplierService {
                     product.setQuantityInStock(quantityToBuy);
                     product.setTax(supplierProduct.get().getTax());
 
-                    product.setPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
+//                    product.setPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
+                    product.setBasePrice(supplierProduct.get().getBasePrice());
+                    product.setFinalPrice(supplierProduct.get().getBasePrice());
                     product.setCharacteristics(supplierProduct.get().getCharacteristics());
                     product.setProductQuantity(0);
                     product.setAddedToBudgetCart(true);
@@ -103,11 +105,10 @@ public class SupplierService {
                 purchasedHistoryProductsList.add(supplierProduct.get());
 
                 supplierPurchasedHistory.setSupplierProducts(purchasedHistoryProductsList);
-//                supplierPurchasedHistory.getSupplierProducts().add(supplierProduct.get());
-                supplierPurchasedHistory.setTotalPrice(supplierProduct.get().getBasePrice() + ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()));
-//                supplierPurchasedHistoryService.save(supplierPurchasedHistory);
+                double totalTaxAmount = ((supplierProduct.get().getTax() / 100) * supplierProduct.get().getBasePrice()) * quantityToBuy;
+                supplierPurchasedHistory.setTotalPrice((supplierProduct.get().getBasePrice() * quantityToBuy + totalTaxAmount));
                 supplierPurchasedHistoryRepository.save(supplierPurchasedHistory);
-                supplierPurchasedHistoryService.pdfDownload(supplierPurchasedHistory.getSupplierOrderId());
+                supplierPurchasedHistoryService.pdfDownload(supplierPurchasedHistory.getSupplierOrderId(), quantityToBuy);
 
                 apiResponse.setStatus(HttpStatus.OK.value());
                 apiResponse.setData(supplierProduct);
@@ -148,7 +149,7 @@ public class SupplierService {
                     ourProduct.setName(supplierProduct.getName());
                     ourProduct.setQuantityInStock(supplierProduct.getProductCount());
                     ourProduct.setTax(supplierProduct.getTax());
-                    ourProduct.setPrice(supplierProduct.getBasePrice() + ((supplierProduct.getTax() / 100) * supplierProduct.getBasePrice()));
+                    ourProduct.setBasePrice(supplierProduct.getBasePrice() + ((supplierProduct.getTax() / 100) * supplierProduct.getBasePrice()));
                     ourProduct.setCharacteristics(supplierProduct.getCharacteristics());
                     productRepo.save(ourProduct);
                 }
