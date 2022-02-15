@@ -126,7 +126,7 @@ public class EmployeeService {
     }
 
     // The employee will tell how many hour will the work take. So after order is saved then the id of employee with order id needed to put
-    // the working hours in the database and calculate the price
+    // the working hours in the database
     public ApiResponse addNewWorkLog(String email, WorkLog workLog) {
         ApiResponse apiResponse = new ApiResponse();
 
