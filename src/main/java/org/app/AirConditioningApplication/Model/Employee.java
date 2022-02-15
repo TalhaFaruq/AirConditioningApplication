@@ -21,7 +21,6 @@ public class Employee {
     private String email;
     private String username;
     private String password;
-    private int priceTime;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "employeeId")
